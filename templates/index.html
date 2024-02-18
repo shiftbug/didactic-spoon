@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web UI Project</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="menu">
+                <h2>Menu Items</h2>
+                <ul id="recent-files">
+                    <!-- Recent files will be loaded here by JavaScript -->
+                </ul>
+            </div>
+            <div class="recent-docs">
+                <h2>Recent Docs</h2>
+                <ul>
+                    <!-- List of recent documents -->
+                </ul>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="settings-panel">
+                <!-- Settings Panel -->
+                <button onclick="loadFile()">Open</button>
+                <button onclick="saveFile()">Save</button>
+            </div>
+            <textarea id="text-content" name="text-content" rows="10" cols="50">Edit text here...</textarea>
+            <div class="form-controls">
+                <button type="button" onclick="sendText()">Send</button>
+            </div>
+            <!-- Special Text Entry for OpenAI Completions -->
+            <div class="text-entry">
+                <textarea id="completion-text" rows="4" cols="50">Enter prompt here...</textarea>
+                <button type="button" onclick="sendCompletion()">Send</button>
+            </div>
+        </main>
+        <!-- Right Panel Dropdown and Modules -->
+        <aside class="sidebar">
+            <div class="dropdown">
+                <select id="module-select" onchange="toggleModule()">
+                    <option value="">Select a Module...</option>
+                    <option value="readers-expectations">Reader's Expectations</option>
+                    <option value="authors-insights">Author's Insights</option>
+                    <!-- Add more module options here -->
+                </select>
+            </div>
+            <div id="modules-container">
+                <!-- Modules will be dynamically added here -->
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // JavaScript functions to handle AJAX calls and update the UI
+    
+        function loadFile(filename) {
+            $.ajax({
+                url: '/load_file',
+                type: 'POST',
+                data: { filename: filename },
+                success: function(response) {
+                    $('#text-content').val(response.content);
+                },
+                error: function() {
+                    alert('Error loading file.');
+                }
+            });
+        }
+    
+        function saveFile() {
+            var filename = 'example.txt'; // You need to get or set the filename
+            var content = $('#text-content').val();
+            $.ajax({
+                url: '/save_file',
+                type: 'POST',
+                data: { filename: filename, content: content },
+                success: function(response) {
+                    if(response.success) {
+                        alert('File saved successfully.');
+                    }
+                },
+                error: function() {
+                    alert('Error saving file.');
+                }
+            });
+        }
+    
+        function sendText() {
+            var content = $('#text-content').val();
+            $.ajax({
+                url: '/process_text',
+                type: 'POST',
+                data: { text: content },
+                success: function(response) {
+                    $('#output-panel').text(response.processed_text);
+                },
+                error: function() {
+                    alert('Error processing text.');
+                }
+            });
+        }
+    
+        function sendSimpleText() {
+            var content = $('#simple-text').val();
+            $.ajax({
+                url: '/process_text',
+                type: 'POST',
+                data: { text: content },
+                success: function(response) {
+                    $('#output-panel').text(response.processed_text);
+                },
+                error: function() {
+                    alert('Error processing simple text.');
+                }
+            });
+        }
+    
+                function toggleModule() {
+            var selectedModule = $('#module-select').val();
+            // Logic to add or remove the module from the right panel
+        }
+
+        function sendCompletion() {
+            var activeModules = [];
+            // Find all active modules based on checkboxes
+            $('#modules-container .module').each(function() {
+                if ($(this).find('input[type="checkbox"]').is(':checked')) {
+                    activeModules.push($(this).attr('id')); // Assuming each module has a unique ID
+                }
+            });
+
+            var prompts = activeModules.map(function(moduleId) {
+                return $('#' + moduleId + ' .prompt').val(); // Assuming each module has a textarea with class 'prompt'
+            });
+
+            // Combine prompts and send to OpenAI API
+            var combinedPrompt = prompts.join('\n');
+            // AJAX call to your Flask backend, which will then call the OpenAI API
+        }
+    
+        $(document).ready(function() {
+            $.ajax({
+                url: '/list_recent_files',
+                type: 'GET',
+                success: function(response) {
+                    var fileList = $('#recent-files');
+                    fileList.empty();
+                    if (response.files && response.files.length > 0) {
+                        response.files.forEach(function(file) {
+                            var listItem = $('<li>').text(file).click(function() {
+                                loadFile(file);
+                            });
+                            fileList.append(listItem);
+                        });
+                    } else {
+                        fileList.append($('<li>').text('No recent documents').addClass('no-files'));
+                    }
+                },
+                error: function() {
+                    alert('Error fetching recent files.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

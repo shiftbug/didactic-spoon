@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    background-color: #eaeaea;
+}
+
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar {
+    background-color: #f0f0f0;
+    width: 20%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.main-content {
+    width: 60%;
+    padding: 20px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.output-panel {
+    background-color: #f9f9f9;
+    width: 20%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.settings-panel, .text-entry {
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.dropdown select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.module {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.module .module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.module .module-header h3 {
+    margin: 0;
+}
+
+.module-checkbox {
+    margin-left: 10px;
+}
+
+.no-files {
+    color: #999;
+    text-align: center;
+    padding: 10px;
+}
+/* Add any additional styles you need here */
