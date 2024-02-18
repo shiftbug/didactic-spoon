@@ -25,7 +25,7 @@
         <main class="main-content">
             <div class="settings-panel">
                 <!-- Settings Panel -->
-                <button onclick="loadFile()">Open</button>
+                <input type="file" id="file-input" accept=".txt" />
                 <button onclick="saveFile()">Save</button>
             </div>
             <textarea id="text-content" name="text-content" rows="10" cols="50">Edit text here...</textarea>
@@ -61,18 +61,24 @@
             $.ajax({
                 url: '/load_file',
                 type: 'POST',
-                data: { filename: filename },
+                data: { filename: filename }, // Ensure this data includes the 'filename' key
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8', // Make sure to set the correct content type
                 success: function(response) {
                     $('#text-content').val(response.content);
                 },
-                error: function() {
-                    alert('Error loading file.');
+                error: function(xhr, status, error) {
+                    var errorMessage = xhr.status + ': ' + xhr.statusText;
+                    alert('Error - ' + errorMessage);
                 }
             });
         }
     
         function saveFile() {
-            var filename = 'example.txt'; // You need to get or set the filename
+            var filename = prompt("Enter filename to save as:", "example.txt"); // Prompt user for filename
+            if (!filename) {
+                alert('Save cancelled.'); // Notify user that save is cancelled if no filename is provided
+                return; // Exit if no filename is provided
+            }
             var content = $('#text-content').val();
             $.ajax({
                 url: '/save_file',
@@ -81,25 +87,15 @@
                 success: function(response) {
                     if(response.success) {
                         alert('File saved successfully.');
+                    } else {
+                        // Handle the case where 'success' is not true
+                        alert('File could not be saved.');
                     }
                 },
-                error: function() {
-                    alert('Error saving file.');
-                }
-            });
-        }
-    
-        function sendText() {
-            var content = $('#text-content').val();
-            $.ajax({
-                url: '/process_text',
-                type: 'POST',
-                data: { text: content },
-                success: function(response) {
-                    $('#output-panel').text(response.processed_text);
-                },
-                error: function() {
-                    alert('Error processing text.');
+                error: function(xhr, status, error) {
+                    // Provide more detailed feedback to the user
+                    var errorMessage = xhr.status + ': ' + xhr.statusText;
+                    alert('Error - ' + errorMessage);
                 }
             });
         }
@@ -124,6 +120,17 @@
             // Logic to add or remove the module from the right panel
         }
 
+        document.getElementById('file-input').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#text-content').val(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        });
+
         function sendCompletion() {
             var activeModules = [];
             // Find all active modules based on checkboxes
@@ -142,12 +149,17 @@
             // AJAX call to your Flask backend, which will then call the OpenAI API
         }
     
+        $('#recent-files li').click(function() {
+            var filename = $(this).text(); // Get the filename from the list item's text
+            loadFile(filename); // Pass the filename to the loadFile function
+        });
+
         $(document).ready(function() {
             $.ajax({
                 url: '/list_recent_files',
                 type: 'GET',
                 success: function(response) {
-                    var fileList = $('#recent-files');
+                    var fileList = $('#recent-docs ul'); // Update this selector to target the correct list
                     fileList.empty();
                     if (response.files && response.files.length > 0) {
                         response.files.forEach(function(file) {
