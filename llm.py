@@ -15,6 +15,6 @@ def llm_call(prompt):
     ]
     )
 
-    print(completion.choices[0].message)
+    return(completion.choices[0].message)
 
 

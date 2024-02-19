@@ -59,11 +59,24 @@ def process_text():
 def get_completion():
     prompt = request.form['prompt']
     text_content = request.form['text']
-    # Combine the prompt with the text content
     combined_input = f"{prompt}\n{text_content}"
-    result = completion(combined_input)  # Ensure the completion function processes this combined input
-    return jsonify(completion=result)
+    result = completion(combined_input)
 
+    # Log the type and attributes of the result for debugging
+    app.logger.debug(f'Result type: {type(result)}')
+    if hasattr(result, '__dict__'):
+        app.logger.debug(f'Result attributes: {result.__dict__}')
+
+    if result is not None:
+        if hasattr(result, 'content'):
+            return jsonify(completion=result.content)
+        else:
+            app.logger.error('Result does not have a content attribute')
+            return jsonify({'error': 'Completion result does not have a content attribute.'}), 500
+    else:
+        app.logger.error('Completion function returned None')
+        return jsonify({'error': 'Completion function did not return any result.'}), 500
+    
 @app.route('/list_recent_files', methods=['GET'])
 def list_recent_files():
     files = os.listdir(FILES_DIR)  # List all files in the FILES_DIR directory

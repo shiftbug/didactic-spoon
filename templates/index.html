@@ -172,8 +172,7 @@
                         data: { prompt: promptContent, text: promptTextContent }, // Send the correct text content
                         context: moduleOutput,
                         success: function(response) {
-                            console.log('API Response:', response); // Log the response for debugging
-                            $(this).val(response.completion); // Display the response in the module's textarea
+                            this.val(response.completion); // Set the value of the module's output textarea
                         },
                         error: function(xhr, status, error) {
                             console.error('AJAX Error:', xhr, status, error); // Log detailed error information

@@ -9,7 +9,7 @@ body {
 
 .container {
     display: flex;
-    max-width: 1200px;
+    max-width: 95%;
     margin: 20px auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
