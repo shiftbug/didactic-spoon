@@ -40,23 +40,52 @@
         </main>
         <!-- Right Panel Dropdown and Modules -->
         <aside class="sidebar">
-            <div class="dropdown">
-                <select id="module-select" onchange="toggleModule()">
-                    <option value="">Select a Module...</option>
-                    <option value="readers-expectations">Reader's Expectations</option>
-                    <option value="authors-insights">Author's Insights</option>
-                    <!-- Add more module options here -->
-                </select>
+            <!-- Repeat this block for each module you want to include -->
+            <div class="module">
+                <div class="module-header">
+                    <h3>Module One</h3>
+                    <select class="prompt-select">
+                        <option value="prompt1">Prompt 1</option>
+                        <option value="prompt2">Prompt 2</option>
+                        <!-- Add more prompt options here -->
+                    </select>
+                </div>
+                <textarea class="module-output" rows="4" cols="50" readonly></textarea>
+                <label class="toggle-module">
+                    <input type="checkbox" class="module-checkbox"> Activate
+                </label>
             </div>
-            <div id="modules-container">
-                <!-- Modules will be dynamically added here -->
+            <div class="module">
+                <div class="module-header">
+                    <h3>Module Two</h3>
+                    <select class="prompt-select">
+                        <option value="prompt1">Prompt 1</option>
+                        <option value="prompt2">Prompt 2</option>
+                        <!-- Add more prompt options here -->
+                    </select>
+                </div>
+                <textarea class="module-output" rows="4" cols="50" readonly></textarea>
+                <label class="toggle-module">
+                    <input type="checkbox" class="module-checkbox"> Activate
+                </label>
             </div>
+            <!-- Add more modules as needed -->
         </aside>
     </div>
 
     <script>
         // JavaScript functions to handle AJAX calls and update the UI
-    
+        var promptContents = {
+            'prompt1': 'Eat my shorts',
+            'prompt2': 'Jagged bloody javascript',
+        // Add more mappings as needed
+        };    
+
+        function getPromptContent(promptId) {
+        // Retrieve the prompt content from the mapping
+            return promptContents[promptId] || 'Default prompt content if not found.';
+        }
+
         function loadFile(filename) {
             $.ajax({
                 url: '/load_file',
@@ -132,21 +161,28 @@
         });
 
         function sendCompletion() {
-            var activeModules = [];
-            // Find all active modules based on checkboxes
-            $('#modules-container .module').each(function() {
-                if ($(this).find('input[type="checkbox"]').is(':checked')) {
-                    activeModules.push($(this).attr('id')); // Assuming each module has a unique ID
+            var textContent = $('#text-content').val();
+            $('.module').each(function() {
+                var isChecked = $(this).find('input[type="checkbox"]').is(':checked');
+                if (isChecked) {
+                    var promptId = $(this).find('.prompt-select').val();
+                    var promptContent = getPromptContent(promptId);
+                    var moduleOutput = $(this).find('.module-output'); // Store reference to output element
+                    $.ajax({
+                        url: '/get_completion',
+                        type: 'POST',
+                        data: { prompt: promptContent, text: textContent },
+                        context: moduleOutput, // Pass the output element as the context for the success callback
+                        success: function(response) {
+                            // 'this' refers to the moduleOutput element thanks to the 'context' option in the AJAX call
+                            this.val(response.completion);
+                        },
+                        error: function() {
+                            alert('Error getting completion.');
+                        }
+                    });
                 }
             });
-
-            var prompts = activeModules.map(function(moduleId) {
-                return $('#' + moduleId + ' .prompt').val(); // Assuming each module has a textarea with class 'prompt'
-            });
-
-            // Combine prompts and send to OpenAI API
-            var combinedPrompt = prompts.join('\n');
-            // AJAX call to your Flask backend, which will then call the OpenAI API
         }
     
         $('#recent-files li').click(function() {

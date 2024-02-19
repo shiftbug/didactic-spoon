@@ -1,73 +1,77 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
+from llm import llm_call as completion
 
-app = Flask(__name__)
+
+# Load your OpenAI API key from an environment variable for security
+
+
+app = Flask(__name__)  # Initialize the Flask application
 
 # Assuming you have a directory named 'files' for storing text files
-FILES_DIR = 'files'
+FILES_DIR = 'files'  # Define the directory where files will be stored
 
 # Ensure FILES_DIR exists
 if not os.path.exists(FILES_DIR):
-    os.makedirs(FILES_DIR)  # Good: Creates the directory if it doesn't exist
+    os.makedirs(FILES_DIR)  # Create the directory if it doesn't exist
 
 @app.route('/')
 def index():
-    return render_template('index.html')  # Good: Renders the main page
+    return render_template('index.html')  # Serve the main page template
 
 @app.route('/load_file', methods=['POST'])
 def load_file():
     try:
-        filename = request.form.get('filename')
+        filename = request.form.get('filename')  # Get the filename from the form data
         if not filename:
-            return jsonify({'error': 'Filename is required.'}), 400
-        file_path = os.path.join(FILES_DIR, filename)
+            return jsonify({'error': 'Filename is required.'}), 400  # Return error if no filename is provided
+        file_path = os.path.join(FILES_DIR, filename)  # Construct the full file path
         if not os.path.exists(file_path):
-            return jsonify({'error': 'File not found.'}), 404
-        with open(file_path, 'r') as file:
-            content = file.read()
-        return jsonify({'content': content})
+            return jsonify({'error': 'File not found.'}), 404  # Return error if file doesn't exist
+        with open(file_path, 'r') as file:  # Open the file for reading
+            content = file.read()  # Read the file content
+        return jsonify({'content': content})  # Return the file content as JSON
     except Exception as e:
-        app.logger.error(f'An error occurred: {e}')
-        return jsonify({'error': 'An internal server error occurred.'}), 500
+        app.logger.error(f'An error occurred: {e}')  # Log any exceptions
+        return jsonify({'error': 'An internal server error occurred.'}), 500  # Return a server error response
     
 @app.route('/save_file', methods=['POST'])
 def save_file():
     try:
-        filename = request.form['filename']  # Same potential KeyError as above
-        content = request.form['content']  # Same potential KeyError as above
-        file_path = os.path.join(FILES_DIR, filename)
-        with open(file_path, 'w') as file:  # Potential Issue: Encoding not specified
-            file.write(content)
-        return jsonify(success=True)
+        filename = request.form['filename']  # Get the filename from the form data
+        content = request.form['content']  # Get the file content from the form data
+        file_path = os.path.join(FILES_DIR, filename)  # Construct the full file path
+        with open(file_path, 'w', encoding='utf-8') as file:  # Open the file for writing with UTF-8 encoding
+            file.write(content)  # Write the content to the file
+        return jsonify(success=True)  # Return a success response
     except Exception as e:
-        app.logger.error(f"An error occurred: {e}")  # Good: Logs the exception
-        return jsonify(error="An internal server error occurred."), 500  # Good: Returns an error response
+        app.logger.error(f"An error occurred: {e}")  # Log any exceptions
+        return jsonify(error="An internal server error occurred."), 500  # Return a server error response
 
 @app.route('/process_text', methods=['POST'])
 def process_text():
     # Placeholder function, ensure proper error handling and input validation when implemented
-    text = request.form['text']
-    processed_text = text  # Placeholder for actual text processing
-    return jsonify(processed_text=processed_text)
+    text = request.form['text']  # Get the text from the form data
+    processed_text = text  # Placeholder for actual text processing logic
+    return jsonify(processed_text=processed_text)  # Return the processed text as JSON
 
 @app.route('/get_completion', methods=['POST'])
 def get_completion():
-    # Placeholder function, ensure to implement the logic and error handling
     prompt = request.form['prompt']
-    # TODO: Implement logic to send the prompt to OpenAI and get the completion
-    # TODO: Return the completion to the frontend
-    pass  # Placeholder, replace with actual implementation
+    text_content = request.form['text']
+    # Combine the prompt with the text content as needed for the LLM call
+    combined_prompt = f"{prompt}\n{text_content}"
+    result = completion(combined_prompt)
+    return jsonify(completion=result)
 
 @app.route('/list_recent_files', methods=['GET'])
 def list_recent_files():
-    # Good: Lists files in the FILES_DIR directory
-    files = os.listdir(FILES_DIR)
-    return jsonify(files=files)
+    files = os.listdir(FILES_DIR)  # List all files in the FILES_DIR directory
+    return jsonify(files=files)  # Return the list of files as JSON
 
 @app.route('/files/<filename>')
 def file(filename):
-    # Good: Sends a file from the FILES_DIR directory
-    return send_from_directory(FILES_DIR, filename)
+    return send_from_directory(FILES_DIR, filename)  # Serve the requested file from the FILES_DIR directory
 
 if __name__ == '__main__':
-    app.run(debug=True)  # Warning: Ensure debug is False in production
+    app.run(debug=True)  # Start the Flask application with debug mode enabled (should be False in production)
