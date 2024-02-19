@@ -59,9 +59,9 @@ def process_text():
 def get_completion():
     prompt = request.form['prompt']
     text_content = request.form['text']
-    # Combine the prompt with the text content as needed for the LLM call
-    combined_prompt = f"{prompt}\n{text_content}"
-    result = completion(combined_prompt)
+    # Combine the prompt with the text content
+    combined_input = f"{prompt}\n{text_content}"
+    result = completion(combined_input)  # Ensure the completion function processes this combined input
     return jsonify(completion=result)
 
 @app.route('/list_recent_files', methods=['GET'])

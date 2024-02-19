@@ -29,9 +29,6 @@
                 <button onclick="saveFile()">Save</button>
             </div>
             <textarea id="text-content" name="text-content" rows="10" cols="50">Edit text here...</textarea>
-            <div class="form-controls">
-                <button type="button" onclick="sendText()">Send</button>
-            </div>
             <!-- Special Text Entry for OpenAI Completions -->
             <div class="text-entry">
                 <textarea id="completion-text" rows="4" cols="50">Enter prompt here...</textarea>
@@ -161,23 +158,25 @@
         });
 
         function sendCompletion() {
-            var textContent = $('#text-content').val();
+            var promptTextContent = $('#completion-text').val(); // Use the content from the "Enter prompt here..." textarea
             $('.module').each(function() {
-                var isChecked = $(this).find('input[type="checkbox"]').is(':checked');
+                var moduleElement = $(this);
+                var isChecked = moduleElement.find('input[type="checkbox"]').is(':checked');
                 if (isChecked) {
-                    var promptId = $(this).find('.prompt-select').val();
+                    var promptId = moduleElement.find('.prompt-select').val();
                     var promptContent = getPromptContent(promptId);
-                    var moduleOutput = $(this).find('.module-output'); // Store reference to output element
+                    var moduleOutput = moduleElement.find('.module-output');
                     $.ajax({
                         url: '/get_completion',
                         type: 'POST',
-                        data: { prompt: promptContent, text: textContent },
-                        context: moduleOutput, // Pass the output element as the context for the success callback
+                        data: { prompt: promptContent, text: promptTextContent }, // Send the correct text content
+                        context: moduleOutput,
                         success: function(response) {
-                            // 'this' refers to the moduleOutput element thanks to the 'context' option in the AJAX call
-                            this.val(response.completion);
+                            console.log('API Response:', response); // Log the response for debugging
+                            $(this).val(response.completion); // Display the response in the module's textarea
                         },
-                        error: function() {
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', xhr, status, error); // Log detailed error information
                             alert('Error getting completion.');
                         }
                     });
