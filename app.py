@@ -57,34 +57,49 @@ def process_text():
 
 @app.route('/get_completion', methods=['POST'])
 def get_completion():
+    # Retrieve the 'prompt' and 'text' from the POST request's form data
     prompt = request.form['prompt']
     text_content = request.form['text']
+    
+    # Combine the prompt and text content into a single string
     combined_input = f"{prompt}\n{text_content}"
+    
+    # Call the completion function from the llm module, passing the combined input
     result = completion(combined_input)
 
-    # Log the type and attributes of the result for debugging
+    # Log the type of the result and its attributes for debugging purposes
     app.logger.debug(f'Result type: {type(result)}')
     if hasattr(result, '__dict__'):
         app.logger.debug(f'Result attributes: {result.__dict__}')
 
+    # Check if the result is not None
     if result is not None:
+        # If the result has a 'content' attribute, return it as JSON
         if hasattr(result, 'content'):
             return jsonify(completion=result.content)
         else:
+            # Log an error and return a 500 error if 'content' attribute is missing
             app.logger.error('Result does not have a content attribute')
             return jsonify({'error': 'Completion result does not have a content attribute.'}), 500
     else:
+        # Log an error and return a 500 error if the completion function returned None
         app.logger.error('Completion function returned None')
         return jsonify({'error': 'Completion function did not return any result.'}), 500
     
 @app.route('/list_recent_files', methods=['GET'])
 def list_recent_files():
-    files = os.listdir(FILES_DIR)  # List all files in the FILES_DIR directory
-    return jsonify(files=files)  # Return the list of files as JSON
+    # List all files in the FILES_DIR directory
+    files = os.listdir(FILES_DIR)
+    
+    # Return the list of files as JSON
+    return jsonify(files=files)
 
 @app.route('/files/<filename>')
 def file(filename):
-    return send_from_directory(FILES_DIR, filename)  # Serve the requested file from the FILES_DIR directory
+    # Serve the requested file from the FILES_DIR directory
+    return send_from_directory(FILES_DIR, filename)
 
 if __name__ == '__main__':
-    app.run(debug=True)  # Start the Flask application with debug mode enabled (should be False in production)
+    # Start the Flask application with debug mode enabled
+    # Note: debug should be set to False in a production environment for security reasons
+    app.run(debug=True)
