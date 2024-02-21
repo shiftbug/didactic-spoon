@@ -67,24 +67,17 @@ def get_completion():
     # Call the completion function from the llm module, passing the combined input
     result = completion(combined_input)
 
-    # Log the type of the result and its attributes for debugging purposes
+    # Log the type of the result for debugging purposes
     app.logger.debug(f'Result type: {type(result)}')
-    if hasattr(result, '__dict__'):
-        app.logger.debug(f'Result attributes: {result.__dict__}')
 
-    # Check if the result is not None
-    if result is not None:
-        # If the result has a 'content' attribute, return it as JSON
-        if hasattr(result, 'content'):
-            return jsonify(completion=result.content)
-        else:
-            # Log an error and return a 500 error if 'content' attribute is missing
-            app.logger.error('Result does not have a content attribute')
-            return jsonify({'error': 'Completion result does not have a content attribute.'}), 500
+    # Check if the result is not None and is a string
+    if result is not None and isinstance(result, str):
+        # Return the result as JSON
+        return jsonify(completion=result)
     else:
-        # Log an error and return a 500 error if the completion function returned None
-        app.logger.error('Completion function returned None')
-        return jsonify({'error': 'Completion function did not return any result.'}), 500
+        # Log an error and return a 500 error if the result is not a string
+        app.logger.error('Result is not a string')
+        return jsonify({'error': 'Completion result is not a string.'}), 500
     
 @app.route('/list_recent_files', methods=['GET'])
 def list_recent_files():

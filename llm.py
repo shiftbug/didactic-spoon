@@ -1,8 +1,15 @@
 # Import the OpenAI library which allows us to interact with the OpenAI API.
 from openai import OpenAI
+import json
+import datetime
 
 # Import the os module to interact with the operating system.
 import os 
+
+# Ensure the logs directory exists.
+logs_dir = 'logs'
+if not os.path.exists(logs_dir):
+    os.makedirs(logs_dir)
 
 # Create an OpenAI client instance. This client will be used to make requests to the OpenAI API.
 # The API key is retrieved from the environment variable 'OPENAI_API_KEY'.
@@ -27,7 +34,17 @@ def llm_call(prompt):
         ]
     )
 
+    # Generate a timestamp for the log filename.
+    timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    log_file_path = os.path.join(logs_dir, f"log_{timestamp}.json")
+
+    # Write the response to a JSON log file.
+    with open(log_file_path, 'w') as log_file:
+        # Convert the message to a dictionary if it's not already in a serializable format
+        message_data = completion.choices[0].message.__dict__ if hasattr(completion.choices[0].message, '__dict__') else completion.choices[0].message
+        json.dump(message_data, log_file, ensure_ascii=False, indent=4)
+
     # Return the message part of the first choice from the completion.
     # The API's response includes a list of choices, and we are interested in the message
     # of the first one, which contains the generated text.
-    return(completion.choices[0].message)
+    return completion.choices[0].message.content
