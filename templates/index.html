@@ -34,15 +34,15 @@
             </aside>
             <!-- Main content area -->
             <main class="main-content">
-                <!-- Panel for file settings like uploading and saving -->
-                <div class="settings-panel">
+                <!-- Panel for file controls like uploading and saving -->
+                <div class="file-controls">
                     <!-- File input for uploading files with '.txt' extension -->
                     <input type="file" id="file-input" accept=".txt" />
                     <!-- Button to trigger the saveFile JavaScript function -->
                     <button onclick="saveFile()">Save</button>
                 </div>
                 <!-- Textarea for editing text content -->
-                <textarea id="text-content" name="text-content" rows="10" cols="50">Edit text here...</textarea>
+                <textarea id="text-content" name="text-content" rows="20" cols="50">Edit text here...</textarea>
                 <!-- Section for OpenAI completions -->
                 <div class="text-entry">
                     <!-- Textarea for entering prompts for OpenAI completions -->
@@ -58,8 +58,11 @@
             <!-- Module block with header, dropdown for prompts, and output area -->
             <div class="module">
                 <div class="module-header">
-                    <h3 class="title">01</h3> <!-- Added class "title" here -->
+                    <h3 class="title"></h3> <!-- Removed 01 Here!! -->
                     <!-- Dropdown for selecting prompts -->
+                    <label class="toggle-module">
+                        <input type="checkbox" class="module-checkbox"> Active
+                    </label>
                     <select class="prompt-select">
                         <option value="prompt1">Reader Expectations</option>
                         <option value="prompt2">Author Insights</option>
@@ -67,25 +70,57 @@
                     </select>
                 </div>
                 <!-- Textarea for displaying module output, set to read-only -->
-                <textarea class="module-output" rows="4" cols="50" readonly></textarea>
+                <textarea class="module-output" rows="5" cols="50" readonly></textarea>
                 <!-- Checkbox to activate or deactivate the module -->
-                <label class="toggle-module">
-                    <input type="checkbox" class="module-checkbox"> Activate
-                </label>
+
             </div>
             <div class="module">
                 <div class="module-header">
-                    <h3 class="title">02</h3> <!-- Added class "title" here -->
+                    <h3 class="title"></h3> <!-- Removed 02 Here!! -->
+                    <label class="toggle-module">
+                        <input type="checkbox" class="module-checkbox"> Active
+                    </label>
                     <select class="prompt-select">
-                        <option value="prompt1">Reader Expectations</option>
                         <option value="prompt2">Author Insights</option>
+                        <option value="prompt1">Reader Expectations</option>
+                        
                         <!-- Add more prompt options here -->
                     </select>
                 </div>
-                <textarea class="module-output" rows="4" cols="50" readonly></textarea>
-                <label class="toggle-module">
-                    <input type="checkbox" class="module-checkbox"> Activate
-                </label>
+                <textarea class="module-output" rows="5" cols="50" readonly></textarea>
+
+            </div>
+            <div class="module">
+                <div class="module-header">
+                    <h3 class="title"></h3> <!-- Removed 02 Here!! -->
+                    <label class="toggle-module">
+                        <input type="checkbox" class="module-checkbox"> Active
+                    </label>
+                    <select class="prompt-select">
+                        <option value="prompt3">Connected Ideas</option>
+                        <option value="prompt4">Conflicting Views</option>
+                        
+                        <!-- Add more prompt options here -->
+                    </select>
+                </div>
+                <textarea class="module-output" rows="5" cols="50" readonly></textarea>
+
+            </div>
+            <div class="module">
+                <div class="module-header">
+                    <h3 class="title"></h3> <!-- Removed 02 Here!! -->
+                    <label class="toggle-module">
+                        <input type="checkbox" class="module-checkbox"> Active
+                    </label>
+                    <select class="prompt-select">
+                        <option value="prompt4">Conflicting Views</option>
+                        <option value="prompt3">Connected Ideas</option>
+                        
+                        <!-- Add more prompt options here -->
+                    </select>
+                </div>
+                <textarea class="module-output" rows="5" cols="50" readonly></textarea>
+
             </div>
             <!-- Add more modules as needed -->
         </aside>
@@ -98,6 +133,9 @@
         var promptContents = {
             'prompt1': 'As a reader encountering this passage for the first time, how do you connect to the content?',
             'prompt2': 'As a distinguished author what stands out to you about this text?',
+            'prompt3': 'As a deep lateral thinker, what are some less obviously connected ideas relating to this text?',
+            'prompt4': 'As a someone who sees things differently, what might we take into account which would run contrary to our first assumption when reading this text??',
+                        
             // Add more mappings as needed
         };    
     

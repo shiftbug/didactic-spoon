@@ -1,90 +1,104 @@
-/* Global styles */
+:root {
+    --sidebar-bg-color: #f0f0f0;
+    --main-bg-color: #fff;
+    --output-bg-color: #f9f9f9;
+    --button-bg-color: #007bff;
+    --button-bg-color-hover: #0056b3;
+    --border-radius: 4px;
+    --box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
 body {
-    font-family: Arial, sans-serif; /* Sets the default font for the page */
-    margin: 0; /* Removes the default margin from the body */
-    padding: 0; /* Removes the default padding from the body */
-    display: flex; /* Enables flexbox layout to center the content horizontally */
-    justify-content: center; /* Centers the content horizontally within the body */
-    background-color: #eaeaea; /* Sets a light grey background color for the page */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    background-color: #eaeaea;
 }
 
-/* Container for the main layout */
 .container {
-    display: flex; /* Enables flexbox layout for direct children */
-    max-width: 98%; /* Limits the container's width to 95% of the viewport width */
-    min-height: 90vh; /* Sets the minimum height to 100% of the viewport height */
-    margin: 20px auto; /* Adds vertical margin and centers the container horizontally */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow around the container */
+    display: flex;
+    max-width: 98%;
+    min-height: 90vh;
+    margin: 20px auto;
+    box-shadow: var(--box-shadow);
 }
 
-/* Sidebar styles */
 .sidebar {
-    background-color: #f0f0f0; /* Sets a light grey background color for the sidebar */
-    width: 20%; /* Sets the sidebar width to 20% of its parent container's width */
-    padding: 20px; /* Adds padding inside the sidebar */
-    overflow-y: auto; /* Enables vertical scrolling if the content overflows */
+    background-color: var(--sidebar-bg-color);
+    width: 15%;
+    padding: 20px;
+    overflow-y: auto;
 }
 
-/* Main content area styles */
 .main-content {
-    width: 60%; /* Sets the main content area width to 60% of its parent container's width */
-    padding: 20px; /* Adds padding inside the main content area */
-    min-height: 70vh; /* Sets a minimum height to 70% of the viewport height */
-    background-color: #fff; /* Sets the background color to white */
-    display: flex; /* Enables flexbox layout for direct children */
-    flex-direction: column; /* Stacks children vertically */
+    width: 60%;
+    padding: 20px;
+    min-height: 70vh;
+    background-color: var(--main-bg-color);
+    display: flex;
+    flex-direction: column;
 }
 
-/* Output panel styles */
 .output-panel {
-    background-color: #f9f9f9; /* Sets a very light grey background color for the output panel */
-    width: 20%; /* Sets the output panel width to 20% of its parent container's width */
-    padding: 20px; /* Adds padding inside the output panel */
-    overflow-y: auto; /* Enables vertical scrolling if the content overflows */
+    background-color: var(--output-bg-color);
+    width: 25%;
+    padding: 20px;
+    overflow-y: auto;
 }
 
-/* Styles for the recent-docs section */
-.recent-docs {
-    /* Add your styles here */
-    background-color: #f7f7f7; /* Example: a slightly different grey than the sidebar */
-    padding: 15px; /* Example: some padding */
-    margin-bottom: 20px; /* Example: space below the section */
-    border-radius: 5px; /* Example: rounded corners */
+.recent-docs ul {
+    list-style-type: none; /* Removes the default list item markers */
+    padding-left: 0; /* Removes the default padding */
 }
 
-/* Styles for the menu section */
+.recent-docs ul li {
+    padding: 2px; /* Adds padding inside each list item for better spacing */
+    margin-bottom: 0px; /* Adds a margin at the bottom of each list item */
+    background-color: var(--output-bg-color); /* Uses the variable for background color */
+    border-radius: var(--border-radius); /* Uses the variable for border radius */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    cursor: pointer; /* Changes the cursor to indicate the items are clickable */
+}
+
+.recent-docs ul li:hover {
+    background-color: var(--sidebar-bg-color); /* Changes background color on hover */
+    color: #333; /* Optionally change text color on hover for better contrast */
+}
+
 .menu {
-    /* Add your styles here */
-    padding: 15px; /* Example: some padding */
-    border-top: 1px solid #e0e0e0; /* Example: a top border to separate from content above */
-    margin-top: 20px; /* Example: space above the section */
+    padding: 15px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 20px;
 }
 
-/* Common styles for settings panel and text entry */
-.settings-panel, .text-entry {
-    margin-bottom: 20px; /* Adds bottom margin to space out elements */
+.file-controls, .text-entry {
+    margin-bottom: 10px;
 }
 
 .module .module-output textarea {
-    width: 100%; /* Ensures the textarea fills the width of the module-output container */
-    padding: 10px; /* Provides padding inside the textarea */
-    margin-bottom: 10px; /* Adds space below the textarea */
-    min-height: 30vh; /* Sets a minimum height of 200px for each module */
-    border: 1px solid #ccc; /* Adds a light grey border around the textarea */
-    border-radius: 4px; /* Rounds the corners of the textarea */
-    resize: vertical; /* Allows the textarea to be resized vertically */
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 2px;
+    min-height: 30vh;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    resize: vertical;
 }
 
-/* Styles for toggle-module labels */
 .toggle-module {
-    display: inline-block; /* Makes the label an inline-block element for better control */
-    margin: 5px 0; /* Adds vertical margin for spacing */
-    padding: 5px 10px; /* Adds internal padding */
-    background-color: #f2f2f2; /* Sets a light background color */
-    border: 1px solid #dcdcdc; /* Adds a subtle border */
-    border-radius: 3px; /* Slightly rounds the corners */
-    cursor: pointer; /* Changes the cursor to indicate it's clickable */
-    transition: background-color 0.3s ease; /* Smooth background color transition for hover effect */
+    font-size: 0.9em;
+    display: inline-block;
+    margin: 3px 5px;
+    padding: 3px 5px;
+    background-color: #dcdcdc;
+    border: 1px solid #bdebe6;
+    border-radius: 0px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 75px; /* Adjust as needed to prevent text from wrapping */
+    white-space: nowrap; /* Prevents the text from wrapping */
 }
 
 /* Hover effect for toggle-module labels */
@@ -92,83 +106,72 @@ body {
     background-color: #e0e0e0; /* Darkens the label on hover */
 }
 
-/* Textarea styles */
+
 textarea {
-    width: 100%; /* Sets the textarea width to fill its parent container */
-    padding: 10px; /* Adds padding inside the textarea */
-    margin-bottom: 10px; /* Adds bottom margin to space out elements */
-    border: 1px solid #ccc; /* Adds a light grey border */
-    border-radius: 4px; /* Rounds the corners of the border */
-    resize: vertical; /* Allows the textarea to be resized vertically */
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 2px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    resize: vertical;
 }
 
-/* Button styles */
 button {
-    padding: 10px 20px; /* Adds padding inside the button */
-    background-color: #007bff; /* Sets the button background color to a blue shade */
-    color: white; /* Sets the button text color to white */
-    border: none; /* Removes the default button border */
-    border-radius: 5px; /* Rounds the corners of the button */
-    cursor: pointer; /* Changes the mouse cursor to indicate the button is clickable */
-    margin-right: 10px; /* Adds right margin to space out buttons */
+    padding: 5px 20px;
+    background-color: var(--button-bg-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    margin-right: 5px;
 }
 
-/* Button hover effect */
 button:hover {
-    background-color: #0056b3; /* Darkens the button background color on hover */
+    background-color: var(--button-bg-color-hover);
 }
 
-/* Dropdown styles */
+button:focus, .toggle-module:focus {
+    outline: 2px solid var(--button-bg-color-hover);
+}
+
 .prompt-select {
-    width: 100%; /* Sets the select element width to fill its parent container */
-    padding: 10px; /* Adds padding inside the select element */
-    margin-bottom: 20px; /* Adds bottom margin to space out elements */
-    border: 1px solid #ccc; /* Adds a light grey border */
-    border-radius: 4px; /* Rounds the corners of the border */
+    font-size: 1.0em;
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 0px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
 }
 
-/* Module styles */
 .module {
-    border: 1px solid #ccc; /* Adds a light grey border */
-    padding: 10px; /* Adds padding inside the module */
-    margin-bottom: 10px; /* Adds bottom margin to space out modules */
-    border-radius: 4px; /* Rounds the corners of the border */
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-bottom: 0px;
+    border-radius: var(--border-radius);
 }
 
-/* Module header styles */
 .module .module-header {
-    display: flex; /* Enables flexbox layout for direct children */
-    justify-content: space-between; /* Distributes space between children */
-    align-items: center; /* Aligns children vertically in the center */
-    margin-bottom: 10px; /* Adds bottom margin to space out the */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px;
 }
 
-/* Module title styles */
 .module .module-header .title {
-    font-size: 1.2em; /* Sets the font size of the title to 1.2 times the default size */
-    font-weight: bold; /* Makes the title text bold */
+    font-size: 0.9em;
+    font-weight: bold;
 }
 
-/* Module content styles */
 .module .module-content {
-    font-size: 0.9em; /* Sets the font size of the content to 0.9 times the default size */
+    font-size: 0.9em;
 }
 
-/* Media query for responsive design */
 @media (max-width: 768px) {
     .container {
-        flex-direction: column; /* Stacks the container's children vertically on smaller screens */
+        flex-direction: column;
     }
 
     .sidebar, .main-content, .output-panel {
-        width: 100%; /* Sets the width of these elements to 100% on smaller screens */
+        width: 100%;
     }
-}
-
-#recent-files li {
-    cursor: pointer; /* Changes the cursor to a pointer to indicate a clickable item */
-}
-#recent-files li:hover {
-    font-weight: bold; /* Bolds the text on hover */
-    background-color: #e0e0e0; /* Highlights the text on hover */
 }
