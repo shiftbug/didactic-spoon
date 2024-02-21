@@ -25,7 +25,7 @@
                 </div>
                 <!-- Section for displaying recent documents -->
                 <div class="recent-docs">
-                    <h2>Recent Docs</h2>
+                    <h2>Recents</h2>
                     <!-- Unordered list for recent documents, to be populated by JavaScript -->
                     <ul>
                         <!-- Placeholder comment for list of recent documents -->
@@ -49,6 +49,21 @@
                     <textarea id="completion-text" rows="4" cols="50">Enter prompt here...</textarea>
                     <!-- Button to send the prompt to the server for processing -->
                     <button type="button" onclick="sendCompletion()">Send</button>
+                </div>
+                <!-- Control Panel for OpenAI API parameters -->
+                <div class="control-panel">
+                    <h3>Model Parameters</h3>
+                    <label for="temperature">Temperature:</label>
+                    <input type="number" id="temperature" name="temperature" value="0.7" step="0.1" min="0" max="1">
+                    <label for="max_tokens">Max Tokens:</label>
+                    <input type="number" id="max_tokens" name="max_tokens" value="200" step="1" min="1">
+                    <label for="top_p">Top P:</label>
+                    <input type="number" id="top_p" name="top_p" value="1" step="0.1" min="0" max="1">
+                    <label for="frequency_penalty">Frequency Penalty:</label>
+                    <input type="number" id="frequency_penalty" name="frequency_penalty" value="0" step="0.1" min="0" max="2">
+                    <label for="presence_penalty">Presence Penalty:</label>
+                    <input type="number" id="presence_penalty" name="presence_penalty" value="0" step="0.1" min="0" max="2">
+
                 </div>
             </main>
         <!-- Right Panel Dropdown and Modules -->
@@ -244,7 +259,11 @@
         function sendCompletion() {
         // Retrieve the text content from the textarea with the id 'completion-text'
             var promptTextContent = $('#completion-text').val();
-
+            var temperature = $('#temperature').val();
+            var max_tokens = $('#max_tokens').val();
+            var top_p = $('#top_p').val();
+            var frequency_penalty = $('#frequency_penalty').val();
+            var presence_penalty = $('#presence_penalty').val();
             // Iterate over each '.module' element in the DOM
             $('.module').each(function() {
                 // Cache the current module element being iterated over
@@ -269,8 +288,15 @@
                         url: '/get_completion',
                         type: 'POST',
                         // Send the selected prompt content and the user-entered text as data to the server
-                        data: { prompt: promptContent, text: promptTextContent },
-                        // Set the context to the module's output textarea to use it within the success callback
+                        data: {
+                            prompt: promptContent,
+                            text: promptTextContent,
+                            temperature: temperature,
+                            max_tokens: max_tokens,
+                            top_p: top_p,
+                            frequency_penalty: frequency_penalty,
+                            presence_penalty: presence_penalty
+                        },// Set the context to the module's output textarea to use it within the success callback
                         context: moduleOutput,
                         success: function(response) {
                             // On success, set the value of the module's output textarea to the response's completion data

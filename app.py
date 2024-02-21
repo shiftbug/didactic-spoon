@@ -64,8 +64,15 @@ def get_completion():
     # Combine the prompt and text content into a single string
     combined_input = f"{prompt}\n{text_content}"
     
-    # Call the completion function from the llm module, passing the combined input
-    result = completion(combined_input)
+    # Retrieve additional parameters from the POST request's form data
+    temperature = float(request.form.get('temperature', 0.7))
+    max_tokens = int(request.form.get('max_tokens', 200))
+    top_p = float(request.form.get('top_p', 1))
+    frequency_penalty = float(request.form.get('frequency_penalty', 0))
+    presence_penalty = float(request.form.get('presence_penalty', 0))
+
+    # Call the completion function with all parameters
+    result = completion(combined_input, temperature, max_tokens, top_p, frequency_penalty, presence_penalty)
 
     # Log the type of the result for debugging purposes
     app.logger.debug(f'Result type: {type(result)}')

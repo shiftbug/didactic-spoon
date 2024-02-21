@@ -2,8 +2,8 @@
     --sidebar-bg-color: #f0f0f0;
     --main-bg-color: #fff;
     --output-bg-color: #f9f9f9;
-    --button-bg-color: #007bff;
-    --button-bg-color-hover: #0056b3;
+    --button-bg-color: #449d94;
+    --button-bg-color-hover: #4eb1b1;
     --border-radius: 4px;
     --box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
@@ -54,12 +54,13 @@ body {
 }
 
 .recent-docs ul li {
-    padding: 2px; /* Adds padding inside each list item for better spacing */
-    margin-bottom: 0px; /* Adds a margin at the bottom of each list item */
-    background-color: var(--output-bg-color); /* Uses the variable for background color */
-    border-radius: var(--border-radius); /* Uses the variable for border radius */
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-    cursor: pointer; /* Changes the cursor to indicate the items are clickable */
+    padding: 2px;
+    margin-bottom: 0px;
+    background-color: var(--output-bg-color);
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: 1px solid #bdebe6; /* Added border color */
 }
 
 .recent-docs ul li:hover {
@@ -174,4 +175,8 @@ button:focus, .toggle-module:focus {
     .sidebar, .main-content, .output-panel {
         width: 100%;
     }
+}
+
+input[type="checkbox"]:checked {
+    accent-color: #bdebe6;
 }

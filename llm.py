@@ -18,7 +18,7 @@ client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 # Define a function named 'llm_call' which takes a single argument 'prompt'.
 # This function will send the prompt to the OpenAI API and return the response.
-def llm_call(prompt):
+def llm_call(prompt, temperature=0.7, max_tokens=200, top_p=1, frequency_penalty=0, presence_penalty=0):
     # Call the OpenAI API's chat completion method with the specified parameters.
     # 'model' specifies the language model to use, in this case, 'gpt-3.5-turbo'.
     # 'max_tokens' defines the maximum length of the generated response.
@@ -27,7 +27,11 @@ def llm_call(prompt):
     # The second message sets the role to 'user' and passes the user's prompt.
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        max_tokens=200,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        top_p=top_p,
+        frequency_penalty=frequency_penalty,
+        presence_penalty=presence_penalty,
         messages=[
             {"role": "system", "content": "You are a writing assistant skilled in approximating perspectives on a text."},
             {"role": "user", "content": prompt}
