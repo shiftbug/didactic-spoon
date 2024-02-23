@@ -50,20 +50,35 @@
                     <!-- Button to send the prompt to the server for processing -->
                     <button type="button" onclick="sendCompletion()">Send</button>
                 </div>
-                <!-- Control Panel for OpenAI API parameters -->
+                <!-- Control Panel for OpenAI API parameters with sliders -->
+                <!-- Control Panel for OpenAI API parameters with sliders -->
                 <div class="control-panel">
                     <h3>Model Parameters</h3>
-                    <label for="temperature">Temperature:</label>
-                    <input type="number" id="temperature" name="temperature" value="0.7" step="0.1" min="0" max="1">
-                    <label for="max_tokens">Max Tokens:</label>
-                    <input type="number" id="max_tokens" name="max_tokens" value="200" step="1" min="1">
-                    <label for="top_p">Top P:</label>
-                    <input type="number" id="top_p" name="top_p" value="1" step="0.1" min="0" max="1">
-                    <label for="frequency_penalty">Frequency Penalty:</label>
-                    <input type="number" id="frequency_penalty" name="frequency_penalty" value="0" step="0.1" min="0" max="2">
-                    <label for="presence_penalty">Presence Penalty:</label>
-                    <input type="number" id="presence_penalty" name="presence_penalty" value="0" step="0.1" min="0" max="2">
-
+                    <div class="slider-container">
+                        <label for="temperature">Temperature:</label>
+                        <input type="range" id="temperature" name="temperature" min="0" max="1" step="0.01" value="0.7">
+                        <span id="temperature-value">0.7</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="max_tokens">Max Tokens:</label>
+                        <input type="range" id="max_tokens" name="max_tokens" min="1" max="512" step="1" value="200">
+                        <span id="max_tokens-value">200</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="top_p">Top P:</label>
+                        <input type="range" id="top_p" name="top_p" min="0" max="1" step="0.01" value="1">
+                        <span id="top_p-value">1</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="frequency_penalty">Frequency Penalty:</label>
+                        <input type="range" id="frequency_penalty" name="frequency_penalty" min="0" max="2" step="0.01" value="0">
+                        <span id="frequency_penalty-value">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <label for="presence_penalty">Presence Penalty:</label>
+                        <input type="range" id="presence_penalty" name="presence_penalty" min="0" max="2" step="0.01" value="0">
+                        <span id="presence_penalty-value">0</span>
+                    </div>
                 </div>
             </main>
         <!-- Right Panel Dropdown and Modules -->
@@ -143,7 +158,26 @@
 
     <script>
         // JavaScript functions to handle AJAX calls and update the UI
-    
+
+        // Update slider values dynamically
+        document.getElementById('temperature').oninput = function() {
+            document.getElementById('temperature-value').textContent = this.value;
+        }
+        document.getElementById('max_tokens').oninput = function() {
+            document.getElementById('max_tokens-value').textContent = this.value;
+        }
+        document.getElementById('top_p').oninput = function() {
+            document.getElementById('top_p-value').textContent = this.value;
+        }
+        document.getElementById('frequency_penalty').oninput = function() {
+            document.getElementById('frequency_penalty-value').textContent = this.value;
+        }
+        document.getElementById('presence_penalty').oninput = function() {
+            document.getElementById('presence_penalty-value').textContent = this.value;
+        }        
+
+
+
         // Object mapping prompt IDs to their respective content strings
         var promptContents = {
             'prompt1': 'As a reader encountering this passage for the first time, how do you connect to the content?',
@@ -257,13 +291,14 @@
         });
 
         function sendCompletion() {
-        // Retrieve the text content from the textarea with the id 'completion-text'
+            // Retrieve the text content from the textarea with the id 'completion-text'
             var promptTextContent = $('#completion-text').val();
             var temperature = $('#temperature').val();
             var max_tokens = $('#max_tokens').val();
             var top_p = $('#top_p').val();
             var frequency_penalty = $('#frequency_penalty').val();
             var presence_penalty = $('#presence_penalty').val();
+
             // Iterate over each '.module' element in the DOM
             $('.module').each(function() {
                 // Cache the current module element being iterated over

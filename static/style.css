@@ -180,3 +180,42 @@ button:focus, .toggle-module:focus {
 input[type="checkbox"]:checked {
     accent-color: #bdebe6;
 }
+
+.slider-container {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+}
+
+.slider-container label {
+    flex-basis: 20%;
+    margin-right: 10px;
+}
+
+.slider-container input[type="range"] {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.slider-container span {
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Style for the control panel */
+.control-panel {
+    padding: 20px;
+    background-color: var(--main-bg-color);
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 20px;
+}
+
+/* Additional styles for the Apply & Send button */
+.control-panel button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+}
