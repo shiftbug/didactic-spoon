@@ -219,3 +219,9 @@ input[type="checkbox"]:checked {
     padding: 10px;
     font-size: 1em;
 }
+
+.slider-container input[type="number"].slider-value {
+    width: 60px; /* Adjust width as needed */
+    margin-left: 10px; /* Spacing between slider and number input */
+    text-align: center;
+}
