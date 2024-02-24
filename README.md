@@ -8,11 +8,18 @@ Shared Repo to Craft Intelligence
 
 ## Introduction
 
-This repository contains the necessary components for a web-based text editing application that integrates with OpenAI. The primary objective of the application is to assist authors by providing instantaneous feedback, critique on their work, and offering branching ideas. Furthermore, the application aims to provide structured outputs in future updates. The user interface is designed to be intuitive and user-friendly, allowing users to edit text files and interact with OpenAI effectively.
+This repository contains the necessary components for a web-based text editing application that integrates with OpenAI. The primary objective of the application is to assist authors by providing instantaneous feedback, critique on their work, and offering branching ideas. Furthermore, the application aims to provide structured outputs in future updates. The user interface is designed to be intuitive and user-friendly, allowing users to edit text files and interact with OpenAI effectively. Yeah, it's mmore than that, but OK.
+
+## Roadmapish
+
+Consider a few notions of continued improvement.  1) The Modules are where the magic happens here. The modules need updated with default model settings and Optional override using the control panel, and to accept input from other selected modules vs. direct from text entry. 2) The next major step is a module composer. This means individualized prompt and setting framework setup savable to the module selection panel. 3) the face of the app can use more functionality → like arrows to send data between modules or text entry, editing. 4) An output mapping composer which allows the user to link certain modules together ALONG WITH particular output structures e.g. training data sets, twitter campaign scheduling, youtube video scripting or even generation, TTS generation, blog construction etc. 5) Structured model responses with validation using Instructor https://github.com/jxnl/instructor.
 
 ## Repository Structure
 
 ### Core Files
+
+<img width="1168" alt="Screenshot" src="https://github.com/shiftbug/didactic-spoon/assets/129222365/3cf88e42-4a69-45a7-9560-97ae5e196fc8">
+
 
 ### `index.html`
 
