@@ -1,0 +1,8 @@
+roadmap:
+
+1) enhance logging.
+2) include ollama models.
+3) Create module builder with Model param defaults.
+4) add module button Force Params to override using the control panel.
+5) Create VDB module and decide how to use it.
+6) Upgrade file saving.
