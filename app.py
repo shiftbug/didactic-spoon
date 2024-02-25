@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
 from llm import llm_call as completion
+from flask_cors import CORS
 
 
 # Load your OpenAI API key from an environment variable for security
 
 
 app = Flask(__name__)  # Initialize the Flask application
+CORS(app)
 
 # Assuming you have a directory named 'files' for storing text files
 FILES_DIR = 'files'  # Define the directory where files will be stored
