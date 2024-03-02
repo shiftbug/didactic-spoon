@@ -5,6 +5,82 @@
   text-align: center;
 }
 
+.user-input {
+  width: 95%;
+  min-width: 300px;
+  margin: 0 auto; /* This centers the engine within its container */
+}
+.engine-output {
+  width: 92%;
+  min-width: 300px;
+  margin: 0 auto; /* This centers the engine within its container */
+}
+.prompt-engines {
+  padding: 2px 10px; /* Top and bottom padding of 15px, left and right padding of 32px */
+  width: 40%;
+  min-width: 500px;
+  margin: 0 auto; /* This centers the engine within its container */
+}
+
+.text-input {
+  width: calc(95% - 140px); /* Assuming the button width is 50px */
+  color: white; /* White text */
+  padding: 7px 18px; /* Top and bottom padding of 15px, left and right padding of 32px */
+  text-align: left; /* Centered text */
+  text-decoration: none; /* No underline */
+  display: inline-block; /* Allows setting width and height */
+  font-size: 16px; /* Font size */
+  margin: 4px 2px; /* Margin around the button */
+  cursor: pointer; /* Mouse cursor becomes a pointer when hovered */
+  
+}
+
+.engine-header {
+  display: flex; /* Enables Flexbox */
+  justify-content: space-between; /* Spreads out the child elements */
+  align-items: center; /* Vertically centers the child elements */
+}
+.select {
+  margin: 0 auto; /* Centers the select in the available space */
+  color: white; /* White text */
+  padding: 2px 15px; /* Top and bottom padding of 15px, left and right padding of 32px */
+  text-align: center; /* Centered text */
+  text-decoration: none; /* No underline */
+  display: inline-block; /* Allows setting width and height */
+  font-size: 16px; /* Font size */
+  margin: 4px 12px; /* Margin around the button */
+  cursor: pointer; /* Mouse cursor becomes a pointer when hovered */
+  border-radius: 8px; /* Rounded corners */
+}
+
+.toggle-engine {
+  flex-grow: 0; /* Ensures it doesn't grow to fill the space */
+  margin-right: auto; /* Pushes everything else to the right */
+  color: white; /* White text */
+  padding: 2px 2px; /* Top and bottom padding of 15px, left and right padding of 32px */
+  text-align: center; /* Centered text */
+  text-decoration: none; /* No underline */
+  display: inline-block; /* Allows setting width and height */
+  font-size: 16px; /* Font size */
+  margin: 4px 12px; /* Margin around the button */
+  cursor: pointer; /* Mouse cursor becomes a pointer when hovered */
+  border-radius: 8px; /* Rounded corners */
+}
+
+.button {
+  color: white; /* White text */
+  padding: 7px 18px; /* Top and bottom padding of 15px, left and right padding of 32px */
+  text-align: center; /* Centered text */
+  text-decoration: none; /* No underline */
+  display: inline-block; /* Allows setting width and height */
+  font-size: 16px; /* Font size */
+  margin: 4px 2px; /* Margin around the button */
+  cursor: pointer; /* Mouse cursor becomes a pointer when hovered */
+  border-radius: 8px; /* Rounded corners */
+}
+
+
+
 .logo {
   height: 6em;
   padding: 1.5em;

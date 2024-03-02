@@ -1,139 +1,99 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Sidebar from './Sidebar'
-import Module from './Module'
+import { useState } from 'react';
+import axios from 'axios';
+import PromptEngine from './PromptEngine';
+import UserInput from './UserInput';
+import './App.css';
+import TaskManager from './TaskManager';
 
-const Thing = ({ name }) => {
-  return (
-    <div>Hi, I'm {name}</div>
-  )
-}
+// Set axios to send cookies with every request
+axios.defaults.withCredentials = true;
 
 function App() {
-  const [file, setFile] = useState(null);
-  const [textContent, setTextContent] = useState('');
-  const [completionText, setCompletionText] = useState('');
-  const [recentFiles, setRecentFiles] = useState([]);
-  const [modelParameters, setModelParameters] = useState({
-    temperature: 0.7,
-    maxTokens: 200,
-  });
-  // State variable to store the list of modules
+  // State for the user's input text
+  const [userText, setUserText] = useState("");
+  // State for managing the list of prompt engines
+  const [promptEngines, setPromptEngines] = useState([{ id: 0, isActive: true, taskName: '', completion: "" }]);
 
-  useEffect(() => {
-    // Fetch recent files on component mount
-    fetch('http://localhost:5000/list_recent_files')
-      .then(response => response.json())
-      .then(data => {
-        setRecentFiles(data.files);
-      })
-      .catch(error => console.error('Error fetching recent files:', error));
-  }, []);
-
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+  // Function to add a new prompt engine to the list
+  const addPromptEngine = () => {
+    const newEngine = { id: promptEngines.length, isActive: true, taskName: '', completion: "" };
+    setPromptEngines([...promptEngines, newEngine]);
   };
 
-  const saveFile = () => {
-    // Implement file saving logic here
-    console.log('Saving file', file);
-  };
-
-  const sendCompletion = () => {
-    // Implement sending completion text logic here
-    console.log('Sending completion:', completionText);
-  };
-
-  const handleModelParameterChange = (event) => {
-    const { name, value } = event.target;
-    setModelParameters(prevParams => ({
-      ...prevParams,
-      [name]: value,
+  // Function to handle the submission of the user's text to the backend
+  const handleSubmit = async () => {
+    // Get only the active engines, their task names, and their instance IDs
+    const tasks = promptEngines.filter(engine => engine.isActive).map(engine => ({
+      instance_id: engine.id,
+      taskName: engine.taskName
     }));
+  
+    // Send the active task names, instance IDs, and user text to the backend
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/submit', {
+        tasks: tasks,
+        userText: userText
+      });
+  
+      console.log('Response data:', response.data); // Log the response data
+      // Update the engines with the completions received from the backend
+      const updatedEngines = promptEngines.map(engine => {
+        if (engine.isActive) {
+          const completionData = response.data.completions.find(completion => completion.instance_id === engine.id);
+          return { ...engine, completion: completionData ? completionData.completion : "No completion received." };
+        }
+        return engine;
+      });
+      console.log(updatedEngines); // Add this line to log the updated engines
+  
+      setPromptEngines(updatedEngines);
+    } catch (error) {
+      console.error('Error submitting Engines:', error);
+      // Error handling should be implemented here
+    }
   };
 
   return (
-    <div className="app">
-      <Sidebar recentFiles={recentFiles} />
-      <button onClick={newSend}>New Send</button>
-      <div className="file-controls">
-        <input type="file" id="file-input" accept=".txt" onChange={handleFileChange} />
-        <button onClick={saveFile}>Save</button>
+    <div className="App">
+      {/* User input component with handlers for change and submit */}
+      <TaskManager className="task-m"/>
+      <UserInput className="user-input" onChange={(e) => setUserText(e.target.value)} value={userText} onSubmit={handleSubmit} />
+      <div className="prompt-engines">
+      <h2>Output Selection</h2>
+        {/* Map through each prompt engine and render its component */}
+        {promptEngines.map((engine, index) => (
+          <PromptEngine
+            key={engine.id}
+            isActive={engine.isActive}
+            taskName={engine.taskName}
+            completion={engine.completion}
+            onActiveChange={() => {
+              // Toggle the active state of the engine
+              const updatedEngines = promptEngines.map((mod, modIndex) => {
+                if (index === modIndex) {
+                  return { ...mod, isActive: !mod.isActive };
+                }
+                return mod;
+              });
+              setPromptEngines(updatedEngines);
+            }}
+            onTaskChange={(e) => {
+              // Update the task name of the engine
+              const updatedEngines = promptEngines.map((mod, modIndex) => {
+                if (index === modIndex) {
+                  return { ...mod, taskName: e.target.value };
+                }
+                return mod;
+              });
+              setPromptEngines(updatedEngines);
+            }}
+          />
+        ))}
       </div>
-      <textarea
-        id="text-content"
-        value={textContent}
-        onChange={(e) => setTextContent(e.target.value)}
-        rows="20"
-        cols="50"
-      />
-      <div className="text-entry">
-        <textarea
-          id="completion-text"
-          value={completionText}
-          onChange={(e) => setCompletionText(e.target.value)}
-          rows="4"
-          cols="50"
-        />
-        <button type="button" onClick={sendCompletion}>Send</button>
-      </div>
-      <div className="control-panel">
-        <h3>Model Parameters</h3>
-        <div className="slider-container">
-          <label htmlFor="temperature">Temperature:</label>
-          <input
-            type="range"
-            id="temperature-slider"
-            name="temperature"
-            min="0"
-            max="1"
-            step="0.01"
-            value={modelParameters.temperature}
-            onChange={handleModelParameterChange}
-          />
-          <input
-            type="number"
-            id="temperature"
-            name="temperature"
-            min="0"
-            max="1"
-            step="0.01"
-            value={modelParameters.temperature}
-            className="slider-value"
-            onChange={handleModelParameterChange}
-          />
-        </div>
-        <div className="slider-container">
-          <label htmlFor="maxTokens">Max Tokens:</label>
-          <input
-            type="range"
-            id="max_tokens-slider"
-            name="maxTokens"
-            min="1"
-            max="512"
-            step="1"
-            value={modelParameters.maxTokens}
-            onChange={handleModelParameterChange}
-          />
-          <input
-            type="number"
-            id="maxTokens"
-            name="maxTokens"
-            min="1"
-            max="512"
-            step="1"
-            value={modelParameters.maxTokens}
-            className="slider-value"
-            onChange={handleModelParameterChange}
-          />
-        </div>
-      </div>
-      <Module />
+      {/* Button to add a new prompt engine */}
+      <button className="button" onClick={addPromptEngine}>Add Prompt Engine</button>
     </div>
   );
-
 }
 
-export default App
+export default App;
