@@ -32,7 +32,6 @@
   font-size: 16px; /* Font size */
   margin: 4px 2px; /* Margin around the button */
   cursor: pointer; /* Mouse cursor becomes a pointer when hovered */
-  
 }
 
 .engine-header {
@@ -74,12 +73,10 @@
   text-decoration: none; /* No underline */
   display: inline-block; /* Allows setting width and height */
   font-size: 16px; /* Font size */
-  margin: 4px 2px; /* Margin around the button */
+  margin: 2px 2px; /* Margin around the button */
   cursor: pointer; /* Mouse cursor becomes a pointer when hovered */
   border-radius: 8px; /* Rounded corners */
 }
-
-
 
 .logo {
   height: 6em;
