@@ -1,0 +1,27 @@
+# Outline of `src/TaskManager.jsx`
+
+## Imports
+- React's `useState` and `useEffect` hooks for state management and side effects.
+- `axios` for making HTTP requests.
+- `Slider` from Material-UI for range inputs.
+- `TextField` from Material-UI for text inputs.
+- Local CSS file for styling.
+
+## TaskManager Component
+- Initializes state variables for tasks, selected task name, and selected task details.
+- Uses `useEffect` to fetch tasks from a server endpoint on component mount.
+- Defines `handleTaskSelection` to update state based on user-selected task.
+- Defines `handleTaskChange` to update task details based on user input.
+- Defines `handleSave` to post updated tasks to the server and reset selection.
+- Defines `handleTaskNameChange` to update the name of the selected task.
+- Defines `handleAddTask` to create a new task based on an example task template.
+- Specifies the order of fields to be displayed in the form.
+- Renders a form that allows users to select, edit, and save task profiles.
+
+## Return JSX
+- Contains a select dropdown to choose a task to edit.
+- Contains a button to add a new task profile.
+- Conditionally renders a form to edit the selected task's details.
+- Maps over `fieldOrder` to render input fields for task attributes.
+- Renders `TextField` components for text inputs and `Slider` components for range inputs.
+- Provides a save button to trigger the `handleSave` function.

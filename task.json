@@ -18,11 +18,11 @@
         "top_p": 0.9
     },
     "Creative Writing": {
-        "frequency_penalty": 0,
+        "frequency_penalty": 0.61,
         "max_tokens": 300,
         "messages": [
             {
-                "content": "You are a creative writer generating unique and engaging stories.",
+                "content": "You are a creative writer generating unique and engaging stories which demonstrate the varied perspectives individuals have because of past experiences. Utilizing dialogue driven events and subtext, you show how characters give attention to some details of a given event to the neglect of others. You showcase the hidden features of personalities missed by others, within a tangible setting evoked through the character's engagement with objects in their physical environments.",
                 "role": "system"
             },
             {
@@ -31,8 +31,8 @@
             }
         ],
         "model": "gpt-3.5-turbo",
-        "presence_penalty": 0.6,
-        "temperature": 1.46,
+        "presence_penalty": 1.51,
+        "temperature": 1.27,
         "top_p": 1
     },
     "Emotional Support": {

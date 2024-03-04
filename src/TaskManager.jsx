@@ -104,7 +104,7 @@ const TaskManager = () => {
 
   return (
     <div>
-      <h2>Profile Manager</h2>
+      <h2>Profile Editor</h2>
       <div
         className="user-input"
         style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}

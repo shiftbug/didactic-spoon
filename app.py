@@ -13,11 +13,17 @@ executor = ThreadPoolExecutor()
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5173"}})
 
-FILES_DIR = 'files'
-LOGS_DIR = 'logs'
+""" FILES_DIR = 'files'
 
 if not os.path.exists(FILES_DIR):
-    os.makedirs(FILES_DIR)
+    os.makedirs(FILES_DIR) """
+
+""" @app.route('/')
+def index():
+    return render_template('index.html') """
+
+LOGS_DIR = 'logs'
+TASK_FILE_PATH = 'task.json'
 
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
@@ -26,8 +32,6 @@ def write_log(log_id, log_entry):
     log_file_path = os.path.join(LOGS_DIR, f"log_{log_id}.json")
     with open(log_file_path, 'w') as log_file:
         json.dump(log_entry, log_file, ensure_ascii=False, indent=4)
-
-TASK_FILE_PATH = 'task.json'
 
 @app.route('/tasks', methods=['GET', 'POST'])
 def tasks():
@@ -41,10 +45,12 @@ def tasks():
             json.dump(new_tasks, file, indent=4)
         return jsonify(new_tasks), 200
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
+@app.route('/process_text', methods=['POST'])
+def process_text():
+    # Placeholder function, ensure proper error handling and input validation when implemented
+    text = request.form['text']  # Get the text from the form data
+    processed_text = text  # Placeholder for actual text processing logic
+    return jsonify(processed_text=processed_text)  # Return the processed text as JSON
 
 @app.route('/submit', methods=['POST', 'OPTIONS'])
 def submit():
@@ -128,7 +134,7 @@ def submit():
         app.logger.error(f"An error occurred: {e}")
         return jsonify({'error': 'An internal server error occurred.'}), 500
 
-@app.route('/list_recent_files', methods=['GET'])
+""" @app.route('/list_recent_files', methods=['GET'])
 def list_recent_files():
     # List all files in the FILES_DIR directory
     files = os.listdir(FILES_DIR)
@@ -168,15 +174,7 @@ def save_file():
         return jsonify(success=True)  # Return a success response
     except Exception as e:
         app.logger.error(f"An error occurred: {e}")  # Log any exceptions
-        return jsonify(error="An internal server error occurred."), 500  # Return a server error response
-
-@app.route('/process_text', methods=['POST'])
-def process_text():
-    # Placeholder function, ensure proper error handling and input validation when implemented
-    text = request.form['text']  # Get the text from the form data
-    processed_text = text  # Placeholder for actual text processing logic
-    return jsonify(processed_text=processed_text)  # Return the processed text as JSON
-
+        return jsonify(error="An internal server error occurred."), 500  # Return a server error response """
 
 if __name__ == '__main__':
     # Start the Flask application with debug mode enabled

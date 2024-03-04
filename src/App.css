@@ -6,6 +6,8 @@
 }
 
 .user-input {
+  height: auto; /* Adjust height automatically to content */
+  min-height: 50px; /* Minimum height to be bigger */
   width: 95%;
   min-width: 300px;
   margin: 0 auto; /* This centers the engine within its container */

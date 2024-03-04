@@ -113,7 +113,7 @@ function App() {
       </div>
       {/* Button to add a new prompt engine */}
       <button className="button" onClick={addPromptEngine}>
-        Add Prompt Engine
+        Add Output
       </button>
     </div>
   );
