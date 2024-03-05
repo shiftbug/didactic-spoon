@@ -1,60 +1,68 @@
 #root {
-  max-width: 1280px;
+  max-width: 2000px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
 
+.App {
+  width: 90%;
+}
+
 .user-input {
   height: auto; /* Adjust height automatically to content */
-  min-height: 50px; /* Minimum height to be bigger */
+  min-height: 150px; /* Minimum height to be bigger */
   width: 95%;
-  min-width: 300px;
-  margin: 0 auto; /* This centers the engine within its container */
+  min-width: 600px;
+  margin: 0 auto; /* This centers the Loader within its container */
 }
-.engine-output {
-  width: 92%;
-  min-width: 300px;
-  margin: 0 auto; /* This centers the engine within its container */
+.Loader-output {
+  height: 200px;
+  width: 96%;
+  min-width: 600px;
+  margin: 0 auto; /* This centers the Loader within its container */
 }
-.prompt-engines {
+.prompt-Loaders {
   padding: 2px 10px; /* Top and bottom padding of 15px, left and right padding of 32px */
   width: 40%;
-  min-width: 500px;
-  margin: 0 auto; /* This centers the engine within its container */
+  min-width: 600px;
+  margin: 0 auto; /* This centers the Loader within its container */
 }
 
 .text-input {
+  height: 150px;
   width: calc(95% - 140px); /* Assuming the button width is 50px */
   color: white; /* White text */
   padding: 7px 18px; /* Top and bottom padding of 15px, left and right padding of 32px */
   text-align: left; /* Centered text */
   text-decoration: none; /* No underline */
   display: inline-block; /* Allows setting width and height */
-  font-size: 16px; /* Font size */
+  font-size: 14px; /* Font size */
   margin: 4px 2px; /* Margin around the button */
   cursor: pointer; /* Mouse cursor becomes a pointer when hovered */
 }
 
-.engine-header {
+.Loader-header {
   display: flex; /* Enables Flexbox */
   justify-content: space-between; /* Spreads out the child elements */
   align-items: center; /* Vertically centers the child elements */
 }
 .select {
+  width: 140px;
+  height: 34px;
   margin: 0 auto; /* Centers the select in the available space */
   color: white; /* White text */
-  padding: 2px 15px; /* Top and bottom padding of 15px, left and right padding of 32px */
+  padding: 2px 12px; /* Top and bottom padding of 15px, left and right padding of 32px */
   text-align: center; /* Centered text */
   text-decoration: none; /* No underline */
   display: inline-block; /* Allows setting width and height */
   font-size: 16px; /* Font size */
-  margin: 4px 12px; /* Margin around the button */
+  margin: 4px 17px; /* Margin around the button */
   cursor: pointer; /* Mouse cursor becomes a pointer when hovered */
   border-radius: 8px; /* Rounded corners */
 }
 
-.toggle-engine {
+.toggle-Loader {
   flex-grow: 0; /* Ensures it doesn't grow to fill the space */
   margin-right: auto; /* Pushes everything else to the right */
   color: white; /* White text */
@@ -69,11 +77,13 @@
 }
 
 .button {
+  float: right;
+  height: 36px;
   color: white; /* White text */
   padding: 7px 18px; /* Top and bottom padding of 15px, left and right padding of 32px */
   text-align: center; /* Centered text */
   text-decoration: none; /* No underline */
-  display: inline-block; /* Allows setting width and height */
+  /* display: inline-block; /* Allows setting width and height */
   font-size: 16px; /* Font size */
   margin: 2px 2px; /* Margin around the button */
   cursor: pointer; /* Mouse cursor becomes a pointer when hovered */

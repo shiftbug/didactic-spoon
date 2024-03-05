@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-// This component handles the user interface for the prompt engine
-function PromptEngine({
+// This component handles the user interface for the prompt Loader
+function PromptLoader({
   onActiveChange,
   onTaskChange,
   isActive,
@@ -23,12 +23,12 @@ function PromptEngine({
     Select a Task
   </option>;
 
-  // Render method returns the UI for the prompt engine
+  // Render method returns the UI for the prompt Loader
   return (
-    <div className="engine">
-      <div className="engine-header">
-        {/* Toggle switch to activate or deactivate the engine */}
-        <label className="toggle-engine">
+    <div className="Loader">
+      <div className="Loader-header">
+        {/* Toggle switch to activate or deactivate the Loader */}
+        <label className="toggle-Loader">
           <input
             type="checkbox"
             checked={isActive} // The checkbox reflects the isActive state
@@ -53,7 +53,7 @@ function PromptEngine({
       </div>
       {/* Textarea to display the completion result, which is read-only */}
       <textarea
-        className="engine-output"
+        className="Loader-output"
         rows="5"
         value={completion}
         readOnly
@@ -63,4 +63,4 @@ function PromptEngine({
 }
 
 // Exporting the component for use in other parts of the application
-export default PromptEngine;
+export default PromptLoader;

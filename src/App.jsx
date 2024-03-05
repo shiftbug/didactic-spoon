@@ -1,40 +1,44 @@
 import { useState } from "react";
 import axios from "axios";
-import PromptEngine from "./PromptEngine";
+import PromptLoader from "./PromptLoader";
 import UserInput from "./UserInput";
 import "./App.css";
-import TaskManager from "./TaskManager";
-
+import ProfileEditor from "./ProfileEditor";
+import BatchManager from "./BatchManager";
+import TaskOrderManager from "./BatchOrder";
 // Set axios to send cookies with every request
 axios.defaults.withCredentials = true;
 
 function App() {
+  // Lift the state up to the App component
+  const [tasks, setTasks] = useState([]);
+  const [batches, setBatches] = useState([]);
   // State for the user's input text
   const [userText, setUserText] = useState("");
-  // State for managing the list of prompt engines
-  const [promptEngines, setPromptEngines] = useState([
+  // State for managing the list of prompt Loaders
+  const [promptLoaders, setPromptLoaders] = useState([
     { id: 0, isActive: true, taskName: "", completion: "" },
   ]);
 
-  // Function to add a new prompt engine to the list
-  const addPromptEngine = () => {
-    const newEngine = {
-      id: promptEngines.length,
+  // Function to add a new prompt Loader to the list
+  const addPromptLoader = () => {
+    const newLoader = {
+      id: promptLoaders.length,
       isActive: true,
       taskName: "",
       completion: "",
     };
-    setPromptEngines([...promptEngines, newEngine]);
+    setPromptLoaders([...promptLoaders, newLoader]);
   };
 
   // Function to handle the submission of the user's text to the backend
   const handleSubmit = async () => {
-    // Get only the active engines, their task names, and their instance IDs
-    const tasks = promptEngines
-      .filter((engine) => engine.isActive)
-      .map((engine) => ({
-        instance_id: engine.id,
-        taskName: engine.taskName,
+    // Get only the active Loaders, their task names, and their instance IDs
+    const tasks = promptLoaders
+      .filter((Loader) => Loader.isActive)
+      .map((Loader) => ({
+        instance_id: Loader.id,
+        taskName: Loader.taskName,
       }));
 
     // Send the active task names, instance IDs, and user text to the backend
@@ -45,26 +49,26 @@ function App() {
       });
 
       console.log("Response data:", response.data); // Log the response data
-      // Update the engines with the completions received from the backend
-      const updatedEngines = promptEngines.map((engine) => {
-        if (engine.isActive) {
+      // Update the Loaders with the completions received from the backend
+      const updatedLoaders = promptLoaders.map((Loader) => {
+        if (Loader.isActive) {
           const completionData = response.data.completions.find(
-            (completion) => completion.instance_id === engine.id
+            (completion) => completion.instance_id === Loader.id
           );
           return {
-            ...engine,
+            ...Loader,
             completion: completionData
               ? completionData.completion
               : "No completion received.",
           };
         }
-        return engine;
+        return Loader;
       });
-      console.log(updatedEngines); // Add this line to log the updated engines
+      console.log(updatedLoaders); // Add this line to log the updated Loaders
 
-      setPromptEngines(updatedEngines);
+      setPromptLoaders(updatedLoaders);
     } catch (error) {
-      console.error("Error submitting Engines:", error);
+      console.error("Error submitting Loaders:", error);
       // Error handling should be implemented here
     }
   };
@@ -72,49 +76,59 @@ function App() {
   return (
     <div className="App">
       {/* User input component with handlers for change and submit */}
-      <TaskManager className="task-m" />
+      <ProfileEditor className="task-m" />
       <UserInput
         className="user-input"
         onChange={(e) => setUserText(e.target.value)}
         value={userText}
         onSubmit={handleSubmit}
       />
-      <div className="prompt-engines">
+      <div className="prompt-Loaders">
         <h2>Profile Selection</h2>
-        {/* Map through each prompt engine and render its component */}
-        {promptEngines.map((engine, index) => (
-          <PromptEngine
-            key={engine.id}
-            isActive={engine.isActive}
-            taskName={engine.taskName}
-            completion={engine.completion}
+        {/* Map through each prompt Loader and render its component */}
+        {promptLoaders.map((Loader, index) => (
+          <PromptLoader
+            key={Loader.id}
+            isActive={Loader.isActive}
+            taskName={Loader.taskName}
+            completion={Loader.completion}
             onActiveChange={() => {
-              // Toggle the active state of the engine
-              const updatedEngines = promptEngines.map((mod, modIndex) => {
+              // Toggle the active state of the Loader
+              const updatedLoaders = promptLoaders.map((mod, modIndex) => {
                 if (index === modIndex) {
                   return { ...mod, isActive: !mod.isActive };
                 }
                 return mod;
               });
-              setPromptEngines(updatedEngines);
+              setPromptLoaders(updatedLoaders);
             }}
             onTaskChange={(e) => {
-              // Update the task name of the engine
-              const updatedEngines = promptEngines.map((mod, modIndex) => {
+              // Update the task name of the Loader
+              const updatedLoaders = promptLoaders.map((mod, modIndex) => {
                 if (index === modIndex) {
                   return { ...mod, taskName: e.target.value };
                 }
                 return mod;
               });
-              setPromptEngines(updatedEngines);
+              setPromptLoaders(updatedLoaders);
             }}
           />
         ))}
       </div>
-      {/* Button to add a new prompt engine */}
-      <button className="button" onClick={addPromptEngine}>
+      {/* Button to add a new prompt Loader */}
+      <button className="button" onClick={addPromptLoader}>
         Add Output
       </button>
+      <div>
+        {/* Pass the state down to the child components as props */}
+        <BatchManager
+          tasks={tasks}
+          setTasks={setTasks}
+          batches={batches}
+          setBatches={setBatches}
+        />
+        <TaskOrderManager tasks={tasks} setTasks={setTasks} />
+      </div>
     </div>
   );
 }
