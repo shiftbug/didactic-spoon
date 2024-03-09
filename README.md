@@ -1,81 +1,74 @@
 # Project Readme
 
-## Project Overview README IS OUT OF DATE
+# State of the App.
 
-This project outlines the implementation of a web application leveraging OpenAI API for various tasks. The application is built using Python (Flask) for the backend and React for the frontend.
+## 1.1 App.jsx:
 
-## Backend
+- **Central component managing application state (userText, promptLoaders, taskParams)**
+- Fetches task parameters from task.json (fetchTaskParams)
+- Manages prompt loaders (addPromptLoader, handleTaskNameChange, handleLowerTierOutputsChange)
+- Sends user input and selected tasks to backend (/submit)
+- Renders ProfileEditor, UserInput, PromptLoader components
+- Unfinished connections:
+  - taskParams used in PromptLoader but not fully utilized
+  - profileEditor not integrated with promptLoaders state
 
-### app.py
+## 1.2 PromptLoader.jsx:
 
-This is the main Flask application file:
+- **Represents individual prompt loader**
+- Renders inputs/controls for prompt loader settings
+- Displays completion result in read-only textarea
+- Updates selected lower-tier outputs (handleLowerTierOutputsChange)
+- Unfinished connections:
+  - taskParams prop passed but not fully utilized
+  - maxTokens prop passed but not used
+  - User Input Checkbox not used
 
-- Imports: Various libraries and modules needed for the application.
-- ThreadPoolExecutor Setup: Initializes a ThreadPoolExecutor for making asynchronous `llm_call` requests.
-- Flask App Configuration: Sets up the Flask app, configures CORS, and initializes directories for storing files and logs.
-- Utility Functions: Functions like `write_log` for writing log entries.
-- Flask Routes: There are multiple routes handling tasks, submissions, file operations, and more.
-- Main Block: If the script is the main module, it starts the Flask application with debug mode enabled.
+## 1.3 ProfileEditor.jsx:
 
-### llm.py
+- **Fetches and manages task profiles (tasks state, fetchTaskParams)**
+- Allows selecting and editing task profiles
+- Saves modified task parameters to backend (/tasks)
+- Unfinished connections:
+  - taskParams fetched but not used for validation or UI control
 
-This file contains the logic for interaction with the OpenAI API:
+## 1.4 [app.py](http://app.py/):
 
-- Imports: Libraries needed for loading environment variables and interacting with the OpenAI API.
-- Environment Configuration: Loads environment variables and retrieves the OpenAI API key.
-- OpenAI Client Initialization: Initializes the OpenAI client with the API key.
-- Function `get_completion`: This function calls the OpenAI API with parameters, ensures task_config dictionary completeness, returns completion text, and handles exceptions.
+- **Backend server handling task-related operations (/tasks, /submit)**
+- Processes user submissions, generates completions (llm_call)
+- Uses ThreadPoolExecutor for async processing
+- Logs completions and errors
+- Unfinished connections:
+  - topological_sort function defined but not used
+  - No validation or error handling for missing/invalid task configurations
 
-### task.json
+## 1.5 UserInput.jsx:
 
-This is a configuration file for different prompt scenarios, each with specific configurations for interacting with GPT models:
+- **UI for text input (textarea, submit button)**
+- Triggers onSubmit callback on button click or "Enter" key
+- No unfinished connections observed
+- Unfinished connections:
+  - User Input checkbox on Prompt Loaders not connected
 
-- Scenarios: Each scenario is a key-value pair with parameters for the GPT model.
-- Common Parameters: These are parameters that are common across all scenarios.
-- Specific Scenario Examples: Examples of specific scenarios include Business Advice, Creative Writing, Fitness Advice, and more.
-- Unique Scenario Configurations: Some scenarios have unique instructions for the model.
+# Interactions and Data Flow:
 
-## Frontend
+- **App.jsx manages state and interactions**
+- UserInput sends user input to App.jsx (onSubmit)
+- ProfileEditor synchronizes task profiles with backend (/tasks)
+- App.jsx sends user input and selected tasks to backend (/submit)
+- Backend processes user input, returns completions (/submit, llm_call)
+- App.jsx updates promptLoaders state with received completions (handleSubmit)
 
-The frontend of the application is built using React.
+# Unfinished Functionality or Past Iterations:
 
-### App.jsx
+- taskParams fetched in App.jsx but not fully utilized in PromptLoader.jsx
+- profileEditor component not integrated with promptLoaders state
+- maxTokens prop passed to PromptLoader.jsx but not used
+- taskParams fetched in ProfileEditor.jsx but not used for validation or UI control
+- No integration between ProfileEditor.jsx and App.jsx or PromptLoader.jsx
+- topological_sort function defined in [app.py](http://app.py/) but not used in the /submit route
+- Lack of validation or error handling for missing/invalid task configurations in [app.py](http://app.py/)
 
-This is the main React component:
-
-- Imports: Libraries, components, and the CSS file for the App component.
-- Axios Configuration: Sets axios defaults to include cookies in every request.
-- App Component: Defines the App functional component with multiple state hooks and functions.
-- JSX Structure: Renders the main components and maps over promptEngines.
-- Export: The App component is exported as the default export.
-
-### PromptEngine.jsx
-
-This is a component for rendering individual prompt engines:
-
-- Imports: React library and hooks.
-- PromptEngine Component: Initial setup and render method.
-- useEffect Hook: Fetches task parameters from a JSON file when the component mounts.
-- Render Method: Returns the UI for the prompt engine.
-- Export: The PromptEngine component is exported for use in other parts of the application.
-
-### TaskManager.jsx NOW PROFILE EDITOR
-
-This component manages the tasks:
-
-- Imports: React’s useState and useEffect hooks, axios for making HTTP requests, Material-UI components, and a local CSS file.
-- TaskManager Component: Initializes state variables, defines various handling functions, and renders a form for user to select, edit, and save task profiles.
-- Return JSX: Contains a select dropdown, an add new task profile button, form to edit the selected task’s details, and a save button.
-
-### UserInput.jsx
-
-This component handles user input:
-
-- Imports: React library.
-- UserInput Component: Functional component that handles user input.
-- JSX Structure: Contains a div element with the class “user-input” as the container, and a button element that triggers `onSubmit` when clicked.
-- Export: The UserInput component is exported as a default export.
-
-Output from the Perplexity Profile, just for fun: "An innovative app utilizing psychometric evaluations to elucidate nuanced cognitive mechanisms and perceptual biases inherent in individuals, contributing to differential assimilation of experiential data. This software marvel delves intricately into the idiosyncratic coalescence of attentional allocation towards salient aspects juxtaposed with inadvertent dismissal of inconspicuous details, shaping a kaleidoscopic panorama of human cognition encompassing interpretive diversity.
+These unfinished connections and unused code elements indicate functionality that is not yet fully implemented or remnants of past iterations that haven't been cleaned up.
 
 Moreover, this groundbreaking application compels profound introspection STILL DOES THO into varying degrees of empathetic predisposition exhibited by users in response to vicarious encounters with divergent emotional stimuli. By discerning gradations in empathic resonance derived from multifaceted empathy dimensions spanning affective concern, perspective-taking aptitude, and interpersonal sensitivity proficiency among others–this avant-garde technological wonder furnishes potent insights applicable across diverse domains ranging from psychological profiling to therapeutic interventions aimed at enhancing mutual understanding and social harmony."

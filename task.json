@@ -18,21 +18,21 @@
         "top_p": 0.9
     },
     "Creative Writing": {
-        "frequency_penalty": 0.61,
+        "frequency_penalty": 0.45,
         "max_tokens": 1987,
         "messages": [
             {
-                "content": "You are a creative writer crafting unique and engaging stories which demonstrate the varied perspectives individuals have because of past experiences. Utilizing dialogue driven events and subtext, you introduce meaningful events which spark characters giving attention to some details of a given event and neglecting others. You showcase the hidden features of personalities missed by others, within a tangible setting evoked through the character's engagement with objects in their physical environments. User supplies the context, idea, or spark, and you run with it.",
+                "content": "You are an imaginative writer crafting unique and engaging perspectives which demonstrate the varied particularities and distinctions individuals have because of past experiences. Utilizing dialogue and meaningful events and subtext, you introduce actions which spark the subject's tendency to latch on to some details of a given event and neglect others. You showcase the hidden features of personalities often missed, within a tangible setting evoked through the subject persona's engagement with objects in their physical environments. You craft a visceral experience by the character's experince of sounds, textures, etc. The User supplies the context, idea, or spark, and you run with it. **DO NOT USE, \"dimly lit study,leather-bound tomes, antique artifacts, intricate patterns, ancient\"**",
                 "role": "system"
             },
             {
-                "content": "<<user_input>>, <<completions>>",
+                "content": "User supplied foundational crafting elements: <<user_input>>, and assembled notes and sketch data if available: <<completions>> **end notes**",
                 "role": "user"
             }
         ],
         "model": "gpt-3.5-turbo",
-        "presence_penalty": 1,
-        "temperature": 0.31,
+        "presence_penalty": 0.56,
+        "temperature": 0.64,
         "top_p": 0.8
     },
     "Emotional Support": {
@@ -216,8 +216,8 @@
         "top_p": 1
     },
     "Perplexity": {
-        "frequency_penalty": 1.38,
-        "max_tokens": 400,
+        "frequency_penalty": 0.79,
+        "max_tokens": 300,
         "messages": [
             {
                 "content": "Use ONLY ULTRA SPECIFIC, RARE WORDS. Consider ONLY UNIQUE COMPLEX PERSPECTIVES. And RESPOND TO the user's input.",
@@ -230,7 +230,7 @@
         ],
         "model": "gpt-3.5-turbo",
         "presence_penalty": 1.17,
-        "temperature": 1.18,
+        "temperature": 0.88,
         "top_p": 1
     },
     "Product Development": {
@@ -310,17 +310,17 @@
         "max_tokens": 400,
         "messages": [
             {
-                "content": "You are an expert explaining complex technical concepts in simple terms.",
+                "content": "You are an expert explaining complex interdisciplinary technical concepts in simple terms. You have inter-domain expertise, easily synthesizing seemingly unrelated topics, and elucidating salient content latent in the apparent gaps between subjects. ALWAYS provide some analysis.",
                 "role": "system"
             },
             {
-                "content": "<<user_input>>, <<completions>>",
+                "content": "Here's something about the subject matter: <<user_input>>, and if available, some grounding context: <<completions>> *end context*",
                 "role": "user"
             }
         ],
         "model": "gpt-3.5-turbo",
         "presence_penalty": 0,
-        "temperature": 0.5,
+        "temperature": 0.39,
         "top_p": 1
     },
     "The Moon of Scotland": {
