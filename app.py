@@ -1,52 +1,40 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, send_from_directory, make_response, render_template, request, jsonify
 import os
-from llm import llm_call as completion
+import json
+import datetime
+import threading
+from llm import get_completion as llm_call
+from flask_cors import CORS
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
+# Set up a ThreadPoolExecutor for making llm_calls asynchronously
+executor = ThreadPoolExecutor()
 
-# Load your OpenAI API key from an environment variable for security
+app = Flask(__name__)
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5173"}})
 
+LOGS_DIR = 'logs'
+TASK_FILE_PATH = 'task.json'
 
-app = Flask(__name__)  # Initialize the Flask application
+if not os.path.exists(LOGS_DIR):
+    os.makedirs(LOGS_DIR)
 
-# Assuming you have a directory named 'files' for storing text files
-FILES_DIR = 'files'  # Define the directory where files will be stored
+def write_log(log_id, log_entry):
+    log_file_path = os.path.join(LOGS_DIR, f"log_{log_id}.json")
+    with open(log_file_path, 'w') as log_file:
+        json.dump(log_entry, log_file, ensure_ascii=False, indent=4)
 
-# Ensure FILES_DIR exists
-if not os.path.exists(FILES_DIR):
-    os.makedirs(FILES_DIR)  # Create the directory if it doesn't exist
-
-@app.route('/')
-def index():
-    return render_template('index.html')  # Serve the main page template
-
-@app.route('/load_file', methods=['POST'])
-def load_file():
-    try:
-        filename = request.form.get('filename')  # Get the filename from the form data
-        if not filename:
-            return jsonify({'error': 'Filename is required.'}), 400  # Return error if no filename is provided
-        file_path = os.path.join(FILES_DIR, filename)  # Construct the full file path
-        if not os.path.exists(file_path):
-            return jsonify({'error': 'File not found.'}), 404  # Return error if file doesn't exist
-        with open(file_path, 'r') as file:  # Open the file for reading
-            content = file.read()  # Read the file content
-        return jsonify({'content': content})  # Return the file content as JSON
-    except Exception as e:
-        app.logger.error(f'An error occurred: {e}')  # Log any exceptions
-        return jsonify({'error': 'An internal server error occurred.'}), 500  # Return a server error response
-    
-@app.route('/save_file', methods=['POST'])
-def save_file():
-    try:
-        filename = request.form['filename']  # Get the filename from the form data
-        content = request.form['content']  # Get the file content from the form data
-        file_path = os.path.join(FILES_DIR, filename)  # Construct the full file path
-        with open(file_path, 'w', encoding='utf-8') as file:  # Open the file for writing with UTF-8 encoding
-            file.write(content)  # Write the content to the file
-        return jsonify(success=True)  # Return a success response
-    except Exception as e:
-        app.logger.error(f"An error occurred: {e}")  # Log any exceptions
-        return jsonify(error="An internal server error occurred."), 500  # Return a server error response
+@app.route('/tasks', methods=['GET', 'POST'])
+def tasks():
+    if request.method == 'GET':
+        with open(TASK_FILE_PATH, 'r') as file:
+            tasks = json.load(file)
+        return jsonify(tasks)
+    elif request.method == 'POST':
+        new_tasks = request.json
+        with open(TASK_FILE_PATH, 'w') as file:
+            json.dump(new_tasks, file, indent=4)
+        return jsonify(new_tasks), 200
 
 @app.route('/process_text', methods=['POST'])
 def process_text():
@@ -55,49 +43,132 @@ def process_text():
     processed_text = text  # Placeholder for actual text processing logic
     return jsonify(processed_text=processed_text)  # Return the processed text as JSON
 
-@app.route('/get_completion', methods=['POST'])
-def get_completion():
-    # Retrieve the 'prompt' and 'text' from the POST request's form data
-    prompt = request.form['prompt']
-    text_content = request.form['text']
+def topological_sort(tasks):
+    # Create a dictionary to store the adjacency list representation of the task dependencies
+    graph = {task['instance_id']: [dep['instance_id'] for dep in task['lowerTierLoaders']] for task in tasks}
     
-    # Combine the prompt and text content into a single string
-    combined_input = f"{prompt}\n{text_content}"
+    # Create a set to keep track of visited tasks
+    visited = set()
     
-    # Retrieve additional parameters from the POST request's form data
-    temperature = float(request.form.get('temperature', 0.7))
-    max_tokens = int(request.form.get('max_tokens', 200))
-    top_p = float(request.form.get('top_p', 1))
-    frequency_penalty = float(request.form.get('frequency_penalty', 0))
-    presence_penalty = float(request.form.get('presence_penalty', 0))
-
-    # Call the completion function with all parameters
-    result = completion(combined_input, temperature, max_tokens, top_p, frequency_penalty, presence_penalty)
-
-    # Log the type of the result for debugging purposes
-    app.logger.debug(f'Result type: {type(result)}')
-
-    # Check if the result is not None and is a string
-    if result is not None and isinstance(result, str):
-        # Return the result as JSON
-        return jsonify(completion=result)
-    else:
-        # Log an error and return a 500 error if the result is not a string
-        app.logger.error('Result is not a string')
-        return jsonify({'error': 'Completion result is not a string.'}), 500
+    # Create a stack to store the sorted tasks
+    stack = []
     
-@app.route('/list_recent_files', methods=['GET'])
-def list_recent_files():
-    # List all files in the FILES_DIR directory
-    files = os.listdir(FILES_DIR)
+    # Helper function for depth-first search (DFS)
+    def dfs(task_id):
+        visited.add(task_id)
+        
+        # Recursively visit all dependencies
+        for dep_id in graph[task_id]:
+            if dep_id not in visited:
+                dfs(dep_id)
+        
+        stack.append(task_id)
     
-    # Return the list of files as JSON
-    return jsonify(files=files)
+    # Perform DFS for each task
+    for task_id in graph:
+        if task_id not in visited:
+            dfs(task_id)
+    
+    # Reverse the stack to get the topologically sorted order
+    sorted_tasks = stack[::-1]
+    
+    return sorted_tasks
 
-@app.route('/files/<filename>')
-def file(filename):
-    # Serve the requested file from the FILES_DIR directory
-    return send_from_directory(FILES_DIR, filename)
+@app.route('/submit', methods=['POST', 'OPTIONS'])
+def submit():
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Max-Age', '86400')
+        return response
+
+    try:
+        data = request.json
+        tasks = data['tasks']
+        user_text = data['userText']
+
+        log_id = datetime.datetime.now().strftime("%Y%m%d-%H%M%S%f")
+        log_entry = {
+            "timestamp": log_id,
+            "tasks": tasks,
+            "input": user_text,
+            "completions": []
+        }
+
+        task_file_path = 'task.json'
+        if not os.path.exists(task_file_path):
+            raise FileNotFoundError("The task configuration file does not exist.")
+
+        with open(task_file_path) as f:
+            task_configs = json.load(f)
+
+        max_tier = max(int(task['tier']) for task in tasks)
+
+        for tier in range(1, max_tier + 1):
+            tier_tasks = [task for task in tasks if int(task['tier']) == tier]
+
+            future_to_task = {}
+            for task in tier_tasks:
+                instance_id = task['instance_id']
+                engine_id = task['taskName']
+
+                if engine_id in task_configs:
+                    task_config = task_configs[engine_id]
+                    
+                    # Get completions from selected lower tier loaders
+                    lower_tier_completions = [
+                        completion['completion'] for completion in log_entry["completions"]
+                        if completion['instance_id'] in [loader['instance_id'] for loader in task['lowerTierLoaders']]
+                    ]
+                    completions_text = "\n".join(lower_tier_completions)
+
+                    for message in task_config['messages']:
+                        if message['role'] == 'user':
+                            content = message['content']
+                            content = content.replace('<<user_input>>', user_text)
+                            content = content.replace('<<completions>>', completions_text)
+                            message['content'] = content
+
+                    future = executor.submit(llm_call, task_config)
+                    future_to_task[future] = (instance_id, engine_id)
+                else:
+                    log_entry["completions"].append({
+                        "instance_id": instance_id,
+                        "error": f"No task configuration found for {engine_id}"
+                    })
+
+            # Wait for tier tasks to complete and collect results
+            for future in as_completed(future_to_task):
+                instance_id, engine_id = future_to_task[future]
+                try:
+                    completion = future.result()
+                    log_entry["completions"].append({
+                        "instance_id": instance_id,
+                        "engine_id": engine_id,
+                        "completion": completion
+                    })
+                except Exception as exc:
+                    app.logger.error(f"Task {instance_id} generated an exception: {exc}")
+                    log_entry["completions"].append({
+                        "instance_id": instance_id,
+                        "error": str(exc)
+                    })
+
+        # Asynchronously write the log entry
+        threading.Thread(target=write_log, args=(log_id, log_entry)).start()
+
+        # Return the completions
+        return jsonify(completions=log_entry["completions"])
+
+    except FileNotFoundError as e:
+        app.logger.error(f"File not found: {e}")
+        return jsonify({'error': 'Configuration file not found.'}), 404
+    except Exception as e:
+        app.logger.error(f"An error occurred: {e}")
+        return jsonify({'error': 'An internal server error occurred.'}), 500
 
 if __name__ == '__main__':
     # Start the Flask application with debug mode enabled

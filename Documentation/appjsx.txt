@@ -1,0 +1,32 @@
+# Outline of `src/App.jsx`
+
+## Imports
+- React's `useState` hook for state management.
+- `axios` for making HTTP requests.
+- `PromptEngine` component for rendering individual prompt engines.
+- `UserInput` component for handling user input.
+- `TaskManager` component (not used in the displayed code).
+- App component's CSS file.
+
+## Axios Configuration
+- Sets `axios.defaults.withCredentials` to `true` to include cookies in every request.
+
+## App Component
+- Defines the `App` functional component.
+
+### State Hooks
+- `userText`: Holds the user's input text.
+- `promptEngines`: Manages an array of prompt engine objects, each with an `id`, `isActive`, `taskName`, and `completion`.
+
+### Functions
+- `addPromptEngine`: Adds a new prompt engine to the `promptEngines` state array.
+- `handleSubmit`: Handles the submission of user text and active prompt engines to the backend, updates the `promptEngines` state with the response.
+
+### JSX Structure
+- Renders the `TaskManager` component.
+- Renders the `UserInput` component with props for `onChange`, `value`, and `onSubmit`.
+- Maps over `promptEngines` to render `PromptEngine` components with props for `isActive`, `taskName`, `completion`, `onActiveChange`, and `onTaskChange`.
+- Provides a button to add a new prompt engine by invoking `addPromptEngine`.
+
+## Export
+- The `App` component is exported as the default export.

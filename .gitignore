@@ -1,2 +1,4 @@
 # Ignore all files in the logs directory
 logs/*.json
+.env
+node_modules/*

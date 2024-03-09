@@ -1,0 +1,39 @@
+# Outline of `app.py`
+
+## Imports
+- Flask for creating the web server and handling HTTP requests.
+- os for interacting with the operating system.
+- json for JSON parsing and serialization.
+- datetime for working with dates and times.
+- threading for running tasks in separate threads.
+- `llm.get_completion` for making calls to a language model.
+- CORS from flask_cors for handling Cross-Origin Resource Sharing.
+- ThreadPoolExecutor and as_completed from concurrent.futures for asynchronous task execution.
+
+## ThreadPoolExecutor Configuration
+- Sets up a ThreadPoolExecutor for making asynchronous calls to the language model.
+
+## Flask App Configuration
+- Initializes the Flask application.
+- Configures CORS with specific origins and support for credentials.
+
+## Constants
+- Defines `LOGS_DIR` for storing log files.
+- Defines `TASK_FILE_PATH` for the task configuration JSON file.
+
+## Directory Setup
+- Checks and creates the `LOGS_DIR` directory if it does not exist.
+
+## Utility Functions
+- `write_log` function to write a log entry to a file in the `LOGS_DIR`.
+
+## Flask Routes
+- `/tasks` route for handling task retrieval and updates via GET and POST methods.
+- `/process_text` route for processing text via POST method (currently a placeholder).
+- `/submit` route for handling the submission of tasks and user text via POST and OPTIONS methods, including asynchronous execution of tasks and logging.
+
+## Error Handling
+- Includes try-except blocks to handle file not found and other exceptions, returning appropriate JSON responses and HTTP status codes.
+
+## Main Block
+- Checks if the script is the main module and runs the Flask app with debug mode enabled (not recommended for production).

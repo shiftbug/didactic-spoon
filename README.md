@@ -1,61 +1,81 @@
-# didactic-spoon
-Shared Repo to Craft Intelligence
+# Project Readme
 
+## Project Overview README IS OUT OF DATE
 
-**Welcome**
+This project outlines the implementation of a web application leveraging OpenAI API for various tasks. The application is built using Python (Flask) for the backend and React for the frontend.
 
-# 
+## Backend
 
-## Introduction
+### app.py
 
-This repository contains the necessary components for a web-based text editing application that integrates with OpenAI. The primary objective of the application is to assist authors by providing instantaneous feedback, critique on their work, and offering branching ideas. Furthermore, the application aims to provide structured outputs in future updates. The user interface is designed to be intuitive and user-friendly, allowing users to edit text files and interact with OpenAI effectively. Yeah, it's mmore than that, but OK.
+This is the main Flask application file:
 
-## Roadmapish
+- Imports: Various libraries and modules needed for the application.
+- ThreadPoolExecutor Setup: Initializes a ThreadPoolExecutor for making asynchronous `llm_call` requests.
+- Flask App Configuration: Sets up the Flask app, configures CORS, and initializes directories for storing files and logs.
+- Utility Functions: Functions like `write_log` for writing log entries.
+- Flask Routes: There are multiple routes handling tasks, submissions, file operations, and more.
+- Main Block: If the script is the main module, it starts the Flask application with debug mode enabled.
 
-Consider a few notions of continued improvement.  1) The Modules are where the magic happens here. The modules need updated with default model settings and Optional override using the control panel, and to accept input from other selected modules vs. direct from text entry. 2) The next major step is a module composer. This means individualized prompt and setting framework setup savable to the module selection panel. 3) the face of the app can use more functionality → like arrows to send data between modules or text entry, editing. 4) An output mapping composer which allows the user to link certain modules together ALONG WITH particular output structures e.g. training data sets, twitter campaign scheduling, youtube video scripting or even generation, TTS generation, blog construction etc. 5) Structured model responses with validation using Instructor https://github.com/jxnl/instructor.
+### llm.py
 
-## Repository Structure
+This file contains the logic for interaction with the OpenAI API:
 
-### Core Files
+- Imports: Libraries needed for loading environment variables and interacting with the OpenAI API.
+- Environment Configuration: Loads environment variables and retrieves the OpenAI API key.
+- OpenAI Client Initialization: Initializes the OpenAI client with the API key.
+- Function `get_completion`: This function calls the OpenAI API with parameters, ensures task_config dictionary completeness, returns completion text, and handles exceptions.
 
-<img width="1168" alt="Screenshot" src="https://github.com/shiftbug/didactic-spoon/assets/129222365/3cf88e42-4a69-45a7-9560-97ae5e196fc8">
+### task.json
 
+This is a configuration file for different prompt scenarios, each with specific configurations for interacting with GPT models:
 
-### `index.html`
+- Scenarios: Each scenario is a key-value pair with parameters for the GPT model.
+- Common Parameters: These are parameters that are common across all scenarios.
+- Specific Scenario Examples: Examples of specific scenarios include Business Advice, Creative Writing, Fitness Advice, and more.
+- Unique Scenario Configurations: Some scenarios have unique instructions for the model.
 
-`index.html` is the primary user interface file containing the HTML structure of the web application. It creates a well-structured layout that includes the main text editing area, a control panel for adjusting OpenAI parameters, and the modules residing in the right panel. The modules are designed to showcase the output of varied styles of prompting, enhancing the user's understanding and interaction with the system.
+## Frontend
 
-### `llm.py`
+The frontend of the application is built using React.
 
-`llm.py` is a Python script housing the lower-level module code. It primarily functions to handle the OpenAI API calls. The script facilitates interaction with the OpenAI API, serving as a bridge between the user's input and the API's response. This file plays a crucial role in the backend functionality of the application.
+### App.jsx
 
-### `app.py`
+This is the main React component:
 
-`app.py` is the main Python file that operates the Flask server, which handles server-side processing. This file manages several server-side functions like loading and saving files, processing text, and managing AJAX requests. Together with `llm.py`, it forms the backbone of the application's backend.
+- Imports: Libraries, components, and the CSS file for the App component.
+- Axios Configuration: Sets axios defaults to include cookies in every request.
+- App Component: Defines the App functional component with multiple state hooks and functions.
+- JSX Structure: Renders the main components and maps over promptEngines.
+- Export: The App component is exported as the default export.
 
-### `style.css`
+### PromptEngine.jsx
 
-`style.css` contains all the CSS styling rules applied to the web application. It shapes the visual appearance of the application, including colors, fonts, and layouts. This file ensures that the user interface is not just functional, but also aesthetically appealing.
+This is a component for rendering individual prompt engines:
 
-## Running the Application
+- Imports: React library and hooks.
+- PromptEngine Component: Initial setup and render method.
+- useEffect Hook: Fetches task parameters from a JSON file when the component mounts.
+- Render Method: Returns the UI for the prompt engine.
+- Export: The PromptEngine component is exported for use in other parts of the application.
 
-To run the application, follow these steps:
+### TaskManager.jsx NOW PROFILE EDITOR
 
-1. Clone this repository to your local machine.
-2. Ensure you have the necessary dependencies installed. These may include Flask and any other packages used in `llm.py` and `app.py`.
-3. Set your OpenAI API key as an environment variable using the command `export OPENAI_API_KEY=<your_api_key>`.
-4. Run `app.py` to start the Flask server.
-5. Open a web browser and navigate to the local address where the Flask server is running (usually `localhost:5000`).
-6. The web application should now be up and running, ready for use.
+This component manages the tasks:
 
-## Troubleshooting & Feedback
+- Imports: React’s useState and useEffect hooks, axios for making HTTP requests, Material-UI components, and a local CSS file.
+- TaskManager Component: Initializes state variables, defines various handling functions, and renders a form for user to select, edit, and save task profiles.
+- Return JSX: Contains a select dropdown, an add new task profile button, form to edit the selected task’s details, and a save button.
 
-In case you encounter any issues or bugs while using the application, please open an issue on the repository page. We value user feedback as it assists us in identifying areas for improvement and enhancing the overall user experience.
+### UserInput.jsx
 
-## Contributing
+This component handles user input:
 
-We welcome contributions to this project. If you're interested in improving the application or adding new features, please fork the repository and make a pull request with your proposed changes. We appreciate your help in making this application better.
+- Imports: React library.
+- UserInput Component: Functional component that handles user input.
+- JSX Structure: Contains a div element with the class “user-input” as the container, and a button element that triggers `onSubmit` when clicked.
+- Export: The UserInput component is exported as a default export.
 
-## License
+Output from the Perplexity Profile, just for fun: "An innovative app utilizing psychometric evaluations to elucidate nuanced cognitive mechanisms and perceptual biases inherent in individuals, contributing to differential assimilation of experiential data. This software marvel delves intricately into the idiosyncratic coalescence of attentional allocation towards salient aspects juxtaposed with inadvertent dismissal of inconspicuous details, shaping a kaleidoscopic panorama of human cognition encompassing interpretive diversity.
 
-This project is licensed under the MIT License. For more details, please refer to the `LICENSE` file in the repository.
+Moreover, this groundbreaking application compels profound introspection STILL DOES THO into varying degrees of empathetic predisposition exhibited by users in response to vicarious encounters with divergent emotional stimuli. By discerning gradations in empathic resonance derived from multifaceted empathy dimensions spanning affective concern, perspective-taking aptitude, and interpersonal sensitivity proficiency among others–this avant-garde technological wonder furnishes potent insights applicable across diverse domains ranging from psychological profiling to therapeutic interventions aimed at enhancing mutual understanding and social harmony."

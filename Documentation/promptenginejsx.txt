@@ -1,0 +1,27 @@
+# Outline of `src/PromptEngine.jsx`
+
+## Imports
+- React library, including `useState` and `useEffect` hooks.
+
+## PromptEngine Component
+- Receives props: `onActiveChange`, `onTaskChange`, `isActive`, `taskName`, `completion`.
+- Initializes `taskParams` state to store task parameters using `useState`.
+
+### useEffect Hook
+- Fetches task parameters from a JSON file (`../task.json`) when the component mounts.
+- Parses the JSON response and updates `taskParams` state.
+
+### Render Method
+- Returns the UI for the prompt engine wrapped in a `div` with class `engine`.
+  - Contains a header `div` with class `engine-header` which includes:
+    - A toggle switch (checkbox) to activate/deactivate the engine.
+      - Reflects the `isActive` state.
+      - Calls `onActiveChange` when toggled.
+    - A dropdown (select element) to choose a task.
+      - Reflects the `taskName` state.
+      - Calls `onTaskChange` when a task is selected.
+      - Maps over `taskParams` to create an `option` for each task.
+  - A textarea to display the `completion` result, which is read-only.
+
+## Export
+- The `PromptEngine` component is exported for use in other parts of the application.

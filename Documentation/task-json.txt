@@ -1,0 +1,35 @@
+# Outline of `task.json`
+
+## JSON Structure
+- A collection of different prompt scenarios, each with specific configurations for interacting with a GPT model.
+
+## Scenarios
+- Each scenario is a key-value pair where the key is the scenario name and the value is an object containing parameters for the GPT model.
+
+### Common Parameters Across Scenarios
+- `frequency_penalty`: Adjusts the likelihood of new responses being repetitive.
+- `max_tokens`: Limits the number of tokens (words/pieces of words) the model can generate.
+- `messages`: An array of message objects that simulate a conversation.
+- `model`: Specifies the version of the GPT model to use.
+- `presence_penalty`: Adjusts the likelihood of introducing new topics.
+- `temperature`: Controls the randomness of the response.
+- `top_p`: Filters the probability distribution of the next token to be more or less random.
+
+### Specific Scenario Examples
+- **Business Advice**: Offers strategic and practical business advice.
+- **Creative Writing**: Generates unique and engaging stories.
+- **Emotional Support**: Provides compassionate emotional support and advice.
+- **Fitness Advice**: Gives personalized workout and nutritional advice.
+- **Homework Help**: Assists with homework questions and explanations.
+- **Mortuary Worker**: Discusses topics related to mortuary work.
+- **Product Development**: Brainstorms features for productivity software.
+- **Travel Planner**: Plans detailed travel itineraries.
+
+### Unique Scenario Configurations
+- Some scenarios have unique instructions for the model, such as:
+  - **Fitness Advice**: Interpreting any user input as a request for fitness advice.
+  - **Mortuary Worker**: Interpreting user input within the context of mortuary work.
+  - **Jenny**: Including specific phrases related to the song "867-5309/Jenny".
+
+## Purpose
+- The `task.json` file serves as a configuration for a system that can simulate various roles and respond to user inputs according to the defined parameters and roles.
