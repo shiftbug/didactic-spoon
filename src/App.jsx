@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import PromptLoader from "./PromptLoader";
 import UserInput from "./UserInput";
@@ -22,6 +22,22 @@ function App() {
       lowerTierOutputs: [],
     },
   ]);
+  // State to store the task parameters
+  const [taskParams, setTaskParams] = useState({});
+
+  useEffect(() => {
+    fetchTaskParams();
+  }, []);
+
+  const fetchTaskParams = async () => {
+    try {
+      const response = await fetch("task.json");
+      const data = await response.json();
+      setTaskParams(data);
+    } catch (error) {
+      console.error("Error fetching task parameters:", error);
+    }
+  };
 
   // Function to add a new prompt loader to the state array
   const addPromptLoader = () => {
@@ -35,7 +51,21 @@ function App() {
     };
     setPromptLoaders([...promptLoaders, newLoader]);
   };
-
+  const handleTaskNameChange = (loaderId, taskName) => {
+    setPromptLoaders((prevLoaders) =>
+      prevLoaders.map((loader) => {
+        const updatedLowerTierLoaders = loader.lowerTierOutputs.map(
+          (output) => {
+            if (output.id === loaderId) {
+              return { ...output, taskName: taskName };
+            }
+            return output;
+          }
+        );
+        return { ...loader, lowerTierOutputs: updatedLowerTierLoaders };
+      })
+    );
+  };
   const handleLowerTierOutputsChange = (id, lowerTierLoader) => {
     setPromptLoaders((prevLoaders) =>
       prevLoaders.map((loader) => {
@@ -133,11 +163,9 @@ function App() {
             completion={Loader.completion}
             tier={Loader.tier}
             lowerTierOutputs={Loader.lowerTierOutputs}
-            // Pass down loaders of lower tiers as props
             lowerTierLoaders={promptLoaders.filter(
               (loader) => loader.tier < Loader.tier && loader.isActive
             )}
-            // Handlers for various changes in the PromptLoader component
             onActiveChange={() => {
               const updatedLoaders = promptLoaders.map((mod, modIndex) => {
                 if (index === modIndex) {
@@ -152,14 +180,15 @@ function App() {
               });
               setPromptLoaders(updatedLoaders);
             }}
-            onTaskChange={(e) => {
+            onTaskChange={(taskName) => {
               const updatedLoaders = promptLoaders.map((mod, modIndex) => {
                 if (index === modIndex) {
-                  return { ...mod, taskName: e.target.value };
+                  return { ...mod, taskName: taskName };
                 }
                 return mod;
               });
               setPromptLoaders(updatedLoaders);
+              onTaskNameChange(Loader.id, taskName);
             }}
             onTierChange={(e) => {
               const updatedLoaders = promptLoaders.map((mod, modIndex) => {
@@ -170,6 +199,9 @@ function App() {
               });
               setPromptLoaders(updatedLoaders);
             }}
+            taskParams={taskParams}
+            maxTokens={taskParams[Loader.taskName]?.max_tokens || 0}
+            onTaskNameChange={handleTaskNameChange}
           />
         ))}
         {/* Button to add a new PromptLoader */}

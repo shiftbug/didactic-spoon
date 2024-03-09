@@ -24,7 +24,7 @@ const TaskManager = () => {
     setSelectedTask(tasks[taskName]);
   };
 
-  const handleTaskChange = (e, key, index) => {
+  const handleTaskChange = (e, key, index, role) => {
     const { name, value, type } = e.target;
     let updatedValue = value;
 
@@ -37,8 +37,11 @@ const TaskManager = () => {
 
     if (key === "messages" && index !== undefined) {
       const updatedMessages = [...updatedTask.messages];
-      if (updatedMessages[index].role === "system") {
-        updatedMessages[index].content = updatedValue;
+      const messageIndex = updatedMessages.findIndex(
+        (message) => message.role === role
+      );
+      if (messageIndex !== -1) {
+        updatedMessages[messageIndex].content = updatedValue;
         updatedTask.messages = updatedMessages;
       }
     } else {
@@ -133,9 +136,9 @@ const TaskManager = () => {
             InputProps={{
               style: {
                 color: "lightgray",
-                height: "40px", // Reduced field height
-                padding: "0 14px", // Reduced padding
-                fontSize: "0.875rem", // Smaller input text font size
+                height: "40px",
+                padding: "0 14px",
+                fontSize: "0.875rem",
               },
             }}
             label="Profile Name"
@@ -148,33 +151,72 @@ const TaskManager = () => {
           {fieldOrder.map((key) => {
             const value = selectedTask[key];
             if (key === "messages") {
-              return value
-                .filter((message) => message.role === "system")
-                .map((message, index) => (
-                  <div key={`message-${index}`} style={{ width: "100%" }}>
-                    {" "}
-                    <TextField
-                      InputLabelProps={{ style: { color: "lightgray" } }}
-                      InputProps={{
-                        style: {
-                          color: "lightgray",
-                          height: "auto", // Allow the height to grow
-                          padding: "14px", // Increase padding for larger area
-                          fontSize: "1rem", // Increase font size for better readability
-                        },
-                      }}
-                      label={`System Message`}
-                      name={`${key}-${index}`}
-                      value={message.content || ""}
-                      onChange={(e) => handleTaskChange(e, key, index)}
-                      variant="outlined"
-                      fullWidth
-                      margin="dense"
-                      multiline // Allow multiple lines
-                      rows={4} // Set minimum number of rows to 4 for larger area
-                    />
-                  </div>
-                ));
+              return (
+                <div key={key}>
+                  {value
+                    .filter((message) => message.role === "system")
+                    .map((message, index) => (
+                      <div
+                        key={`system-message-${index}`}
+                        style={{ width: "100%" }}
+                      >
+                        <TextField
+                          InputLabelProps={{ style: { color: "lightgray" } }}
+                          InputProps={{
+                            style: {
+                              color: "lightgray",
+                              height: "auto",
+                              padding: "14px",
+                              fontSize: "1rem",
+                            },
+                          }}
+                          label="System Message"
+                          name={`system-message-${index}`}
+                          value={message.content || ""}
+                          onChange={(e) =>
+                            handleTaskChange(e, key, index, "system")
+                          }
+                          variant="outlined"
+                          fullWidth
+                          margin="dense"
+                          multiline
+                          rows={4}
+                        />
+                      </div>
+                    ))}
+                  {value
+                    .filter((message) => message.role === "user")
+                    .map((message, index) => (
+                      <div
+                        key={`user-message-${index}`}
+                        style={{ width: "100%" }}
+                      >
+                        <TextField
+                          InputLabelProps={{ style: { color: "lightgray" } }}
+                          InputProps={{
+                            style: {
+                              color: "lightgray",
+                              height: "auto",
+                              padding: "14px",
+                              fontSize: "1rem",
+                            },
+                          }}
+                          label="User Message"
+                          name={`user-message-${index}`}
+                          value={message.content || ""}
+                          onChange={(e) =>
+                            handleTaskChange(e, key, index, "user")
+                          }
+                          variant="outlined"
+                          fullWidth
+                          margin="dense"
+                          multiline
+                          rows={4}
+                        />
+                      </div>
+                    ))}
+                </div>
+              );
             } else {
               const isNumber = typeof value === "number";
               let minVal = 0;
@@ -238,14 +280,14 @@ const TaskManager = () => {
                       InputProps={{
                         style: {
                           color: "lightgray",
-                          height: "40px", // Reduced field height
-                          padding: "0 14px", // Reduced padding
-                          fontSize: "0.875rem", // Smaller input text font size
+                          height: "40px",
+                          padding: "0 14px",
+                          fontSize: "0.875rem",
                         },
                       }}
                       label={key
                         .replace(/_/g, " ")
-                        .replace(/^\w/, (c) => c.toUpperCase())} // Capitalize and replace underscores
+                        .replace(/^\w/, (c) => c.toUpperCase())}
                       type={isNumber ? "number" : "text"}
                       name={key}
                       value={value}

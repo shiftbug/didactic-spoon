@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 function PromptLoader({
   onActiveChange,
@@ -11,14 +11,16 @@ function PromptLoader({
   lowerTierLoaders,
   lowerTierOutputs,
   onLowerTierOutputsChange,
+  taskParams,
 }) {
-  const [taskParams, setTaskParams] = useState({});
+  const textareaRef = useRef(null);
 
   useEffect(() => {
-    fetch("../task.json")
-      .then((response) => response.json())
-      .then((data) => setTaskParams(data));
-  }, []);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [completion]);
 
   const handleLowerTierOutputsChange = (lowerTierLoader) => {
     onLowerTierOutputsChange(lowerTierLoader);
@@ -32,7 +34,11 @@ function PromptLoader({
           Active
         </label>
 
-        <select className="select" value={taskName} onChange={onTaskChange}>
+        <select
+          className="select"
+          value={taskName}
+          onChange={(e) => onTaskChange(e.target.value)}
+        >
           <option value="" disabled>
             Select a Task
           </option>
@@ -56,7 +62,7 @@ function PromptLoader({
 
       <textarea
         className="Loader-output"
-        rows="5"
+        ref={textareaRef}
         value={completion}
         readOnly
       />
