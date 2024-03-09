@@ -1,48 +1,41 @@
 import React, { useState, useEffect } from "react";
 
-// This component handles the user interface for the prompt Loader
 function PromptLoader({
   onActiveChange,
   onTaskChange,
+  onTierChange,
   isActive,
   taskName,
   completion,
+  tier,
+  lowerTierLoaders,
+  lowerTierOutputs,
+  onLowerTierOutputsChange,
 }) {
-  // State to store the parameters for the tasks
   const [taskParams, setTaskParams] = useState({});
 
-  // Effect hook to fetch task parameters when the component mounts
   useEffect(() => {
-    // Fetching task parameters from a JSON file
-    fetch("../task.json") // The path to the JSON file with task parameters
-      .then((response) => response.json()) // Parsing the JSON response
-      .then((data) => setTaskParams(data)); // Updating the state with the fetched data
-  }, []); // Empty dependency array means this effect runs once on mount
+    fetch("../task.json")
+      .then((response) => response.json())
+      .then((data) => setTaskParams(data));
+  }, []);
 
-  <option value="" disabled>
-    Select a Task
-  </option>;
+  const handleLowerTierOutputsChange = (lowerTierLoader) => {
+    onLowerTierOutputsChange(lowerTierLoader);
+  };
 
-  // Render method returns the UI for the prompt Loader
   return (
     <div className="Loader">
       <div className="Loader-header">
-        {/* Toggle switch to activate or deactivate the Loader */}
         <label className="toggle-Loader">
-          <input
-            type="checkbox"
-            checked={isActive} // The checkbox reflects the isActive state
-            onChange={onActiveChange} // Calls the provided onActiveChange handler when toggled
-          />{" "}
+          <input type="checkbox" checked={isActive} onChange={onActiveChange} />
           Active
         </label>
-        {/* Dropdown to select a task */}
+
         <select className="select" value={taskName} onChange={onTaskChange}>
           <option value="" disabled>
             Select a Task
           </option>
-
-          {/* Maps over taskParams state to create an option for each task */}
           {taskParams &&
             Object.keys(taskParams).map((taskType) => (
               <option key={taskType} value={taskType}>
@@ -50,17 +43,55 @@ function PromptLoader({
               </option>
             ))}
         </select>
+
+        <select className="select" value={tier} onChange={onTierChange}>
+          <option value="" disabled>
+            Select a Tier
+          </option>
+          <option value="1">Tier 1</option>
+          <option value="2">Tier 2</option>
+          <option value="3">Tier 3</option>
+        </select>
       </div>
-      {/* Textarea to display the completion result, which is read-only */}
+
       <textarea
         className="Loader-output"
         rows="5"
         value={completion}
         readOnly
       />
+
+      <div className="Loader-inputs">
+        <div className="checkbox-container">
+          <label>Select Inputs</label>
+          <label htmlFor="userText">
+            <input
+              type="checkbox"
+              id="userText"
+              name="userText"
+              value="userText"
+            />
+            User Input
+          </label>
+          {lowerTierLoaders.map((loader) => (
+            <label key={loader.id} htmlFor={loader.id}>
+              <input
+                type="checkbox"
+                id={loader.id}
+                name={loader.id}
+                value={loader.id}
+                checked={lowerTierOutputs.some(
+                  (output) => output.id === loader.id
+                )}
+                onChange={() => handleLowerTierOutputsChange(loader)}
+              />
+              {loader.taskName}
+            </label>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
-// Exporting the component for use in other parts of the application
 export default PromptLoader;

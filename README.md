@@ -1,6 +1,6 @@
 # Project Readme
 
-## Project Overview
+## Project Overview README IS OUT OF DATE
 
 This project outlines the implementation of a web application leveraging OpenAI API for various tasks. The application is built using Python (Flask) for the backend and React for the frontend.
 
@@ -59,7 +59,7 @@ This is a component for rendering individual prompt engines:
 - Render Method: Returns the UI for the prompt engine.
 - Export: The PromptEngine component is exported for use in other parts of the application.
 
-### TaskManager.jsx
+### TaskManager.jsx NOW PROFILE EDITOR
 
 This component manages the tasks:
 
@@ -78,4 +78,4 @@ This component handles user input:
 
 Output from the Perplexity Profile, just for fun: "An innovative app utilizing psychometric evaluations to elucidate nuanced cognitive mechanisms and perceptual biases inherent in individuals, contributing to differential assimilation of experiential data. This software marvel delves intricately into the idiosyncratic coalescence of attentional allocation towards salient aspects juxtaposed with inadvertent dismissal of inconspicuous details, shaping a kaleidoscopic panorama of human cognition encompassing interpretive diversity.
 
-Moreover, this groundbreaking application compels profound introspection into varying degrees of empathetic predisposition exhibited by users in response to vicarious encounters with divergent emotional stimuli. By discerning gradations in empathic resonance derived from multifaceted empathy dimensions spanning affective concern, perspective-taking aptitude, and interpersonal sensitivity proficiency among others–this avant-garde technological wonder furnishes potent insights applicable across diverse domains ranging from psychological profiling to therapeutic interventions aimed at enhancing mutual understanding and social harmony."
+Moreover, this groundbreaking application compels profound introspection STILL DOES THO into varying degrees of empathetic predisposition exhibited by users in response to vicarious encounters with divergent emotional stimuli. By discerning gradations in empathic resonance derived from multifaceted empathy dimensions spanning affective concern, perspective-taking aptitude, and interpersonal sensitivity proficiency among others–this avant-garde technological wonder furnishes potent insights applicable across diverse domains ranging from psychological profiling to therapeutic interventions aimed at enhancing mutual understanding and social harmony."

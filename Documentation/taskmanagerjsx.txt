@@ -1,4 +1,4 @@
-# Outline of `src/TaskManager.jsx`
+# Outline of `src/TaskManager.jsx` Now ProfileEditor though these descriptions are outdated.
 
 ## Imports
 - React's `useState` and `useEffect` hooks for state management and side effects.

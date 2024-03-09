@@ -17,7 +17,7 @@
   margin: 0 auto; /* This centers the Loader within its container */
 }
 .Loader-output {
-  height: 200px;
+  height: 100px;
   width: 96%;
   min-width: 600px;
   margin: 0 auto; /* This centers the Loader within its container */
