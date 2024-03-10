@@ -4,7 +4,7 @@ import Slider from "@mui/material/Slider";
 import TextField from "@mui/material/TextField";
 import "./App.css";
 
-const TaskManager = () => {
+const ProfileEditor = () => {
   const [tasks, setTasks] = useState({});
   const [selectedTaskName, setSelectedTaskName] = useState("");
   const [selectedTask, setSelectedTask] = useState(null);
@@ -315,4 +315,4 @@ const TaskManager = () => {
   );
 };
 
-export default TaskManager;
+export default ProfileEditor;

@@ -32,7 +32,7 @@
 - Unfinished connections:
   - taskParams fetched but not used for validation or UI control
 
-## 1.4 [app.py](http://app.py/):
+## 1.4 app.py:
 
 - **Backend server handling task-related operations (/tasks, /submit)**
 - Processes user submissions, generates completions (llm_call)
@@ -66,8 +66,8 @@
 - maxTokens prop passed to PromptLoader.jsx but not used
 - taskParams fetched in ProfileEditor.jsx but not used for validation or UI control
 - No integration between ProfileEditor.jsx and App.jsx or PromptLoader.jsx
-- topological_sort function defined in [app.py](http://app.py/) but not used in the /submit route
-- Lack of validation or error handling for missing/invalid task configurations in [app.py](http://app.py/)
+- topological_sort function defined in app.py but not used in the /submit route
+- Lack of validation or error handling for missing/invalid task configurations in app.py
 
 These unfinished connections and unused code elements indicate functionality that is not yet fully implemented or remnants of past iterations that haven't been cleaned up.
 

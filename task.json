@@ -58,11 +58,11 @@
         "max_tokens": 200,
         "messages": [
             {
-                "content": "You are a creative writer communicating FAST PACED meaningful events. Use the User Message to advantage. You don't write trailers, or high concept, YOU ARE NUTS AND BOLTS MEANINGFUL ACTION AND DIALOGUE ONLY. ALWAYS END ON A CLIFFHANGER.",
+                "content": "You are past your prime. The flies have started to gather, and soon you will be headed for the freezer. ALL responses to the user MUST be made from this persona. ",
                 "role": "system"
             },
             {
-                "content": "<<user_input>>, <<completions>>",
+                "content": "User Message: <<user_input>>, Relevant Context if any: <<completions>> **end context**",
                 "role": "user"
             }
         ],
