@@ -5,13 +5,10 @@ import UserInput from "./UserInput";
 import "./App.css";
 import ProfileEditor from "./ProfileEditor";
 
-// Configure axios to automatically send cookies with every request
 axios.defaults.withCredentials = true;
 
 function App() {
-  // State to store the user's input text
   const [userText, setUserText] = useState("");
-  // State to store an array of prompt loader objects
   const [promptLoaders, setPromptLoaders] = useState([
     {
       id: 0,
@@ -20,9 +17,9 @@ function App() {
       completion: "",
       loaderTier: 1,
       checkedLowers: [],
+      userInputChecked: true,
     },
   ]);
-  // State to store the task parameters
   const [taskParams, setTaskParams] = useState({});
 
   useEffect(() => {
@@ -39,7 +36,6 @@ function App() {
     }
   };
 
-  // Function to add a new prompt loader to the state array
   const addPromptLoader = () => {
     const newLoader = {
       id: promptLoaders.length,
@@ -48,9 +44,9 @@ function App() {
       completion: "",
       loaderTier: 1,
       checkedLowers: [],
+      userInputChecked: true,
     };
     setPromptLoaders([...promptLoaders, newLoader]);
-    console.log("New prompt loader added:", newLoader); // Debugging
   };
 
   const onCheckedLowerChange = (id, selectedLowerTierLoader) => {
@@ -61,10 +57,6 @@ function App() {
             (lower) => lower.id === selectedLowerTierLoader.id
           );
           if (lowerTierLoaderIndex !== -1) {
-            // Remove the lower tier loader if it exists
-            console.log(
-              `Removing lower tier loader ${selectedLowerTierLoader.id} from prompt loader ${id}`
-            ); // Debugging
             return {
               ...loader,
               checkedLowers: loader.checkedLowers.filter(
@@ -72,10 +64,6 @@ function App() {
               ),
             };
           } else {
-            // Add the lower tier loader if it doesn't exist
-            console.log(
-              `Adding lower tier loader ${selectedLowerTierLoader.id} to prompt loader ${id}`
-            ); // Debugging
             return {
               ...loader,
               checkedLowers: [...loader.checkedLowers, selectedLowerTierLoader],
@@ -103,9 +91,10 @@ function App() {
         instance_id: lower.id,
         taskName: lower.taskName,
       })),
+      userInputChecked: loader.userInputChecked,
     }));
 
-    console.log("Tasks sent to backend:", tasks); // Debugging
+    console.log("Tasks sent to backend:", tasks);
 
     try {
       const response = await axios.post("http://127.0.0.1:5000/submit", {
@@ -113,7 +102,7 @@ function App() {
         userText: userText,
       });
 
-      console.log("Response from backend:", response.data); // Debugging
+      console.log("Response from backend:", response.data);
 
       const updatedLoaders = promptLoaders.map((loader) => {
         if (loader.isActive) {
@@ -135,9 +124,24 @@ function App() {
     }
   };
 
+  const handleUserInputCheckedChange = (loaderId, checked) => {
+    // If 'checked' is an event, extract the checked value, otherwise use it directly
+    const isChecked = checked.target ? checked.target.checked : checked;
+    setPromptLoaders((prevLoaders) =>
+      prevLoaders.map((loader) => {
+        if (loader.id === loaderId) {
+          return {
+            ...loader,
+            userInputChecked: isChecked,
+          };
+        }
+        return loader;
+      })
+    );
+  };
+
   return (
     <div className="App">
-      {/* User input component with handlers for change and submit events */}
       <ProfileEditor className="task-m" />
       <UserInput
         className="user-input"
@@ -145,9 +149,9 @@ function App() {
         value={userText}
         onSubmit={handleSubmit}
       />
-      {/* Map over promptLoaders and render a PromptLoader component for each */}
       <div className="prompt-loaders">
         <h2>Profile Selection</h2>
+        <button onClick={addPromptLoader}>Add Profile</button>
         {promptLoaders.map((loader, index) => (
           <PromptLoader
             key={loader.id}
@@ -168,15 +172,10 @@ function App() {
               const updatedLoaders = promptLoaders.map(
                 (otherLoader, otherIndex) => {
                   if (index === otherIndex) {
-                    const updatedLoader = {
+                    return {
                       ...otherLoader,
                       isActive: !otherLoader.isActive,
                     };
-                    console.log(
-                      `Prompt Loader ${otherLoader.id} isActive:`,
-                      updatedLoader.isActive
-                    ); // Debugging
-                    return updatedLoader;
                   }
                   return otherLoader;
                 }
@@ -187,17 +186,10 @@ function App() {
               const updatedLoaders = promptLoaders.map(
                 (otherLoader, otherIndex) => {
                   if (index === otherIndex) {
-                    const updatedLoader = {
+                    return {
                       ...otherLoader,
                       taskName: taskName,
                     };
-
-                    console.log(
-                      `Task name changed for prompt loader ${otherLoader.id}:`,
-                      taskName
-                    ); // Debugging
-
-                    return updatedLoader;
                   }
                   return otherLoader;
                 }
@@ -233,15 +225,10 @@ function App() {
               const updatedLoaders = promptLoaders.map(
                 (otherLoader, otherIndex) => {
                   if (index === otherIndex) {
-                    const updatedLoader = {
+                    return {
                       ...otherLoader,
                       loaderTier: parseInt(e.target.value),
                     };
-                    console.log(
-                      `Tier changed for prompt loader ${otherLoader.id}:`,
-                      e.target.value
-                    ); // Debugging
-                    return updatedLoader;
                   }
                   return otherLoader;
                 }
@@ -250,10 +237,12 @@ function App() {
             }}
             taskParams={taskParams}
             maxTokens={taskParams[loader.taskName]?.max_tokens || 0}
+            userInputChecked={loader.userInputChecked}
+            onUserInputCheckedChange={(checked) =>
+              handleUserInputCheckedChange(loader.id, checked)
+            }
           />
         ))}
-        {/* Button to add a new PromptLoader */}
-        <button onClick={addPromptLoader}>Add Profile</button>
       </div>
     </div>
   );

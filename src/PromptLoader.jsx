@@ -13,6 +13,8 @@ function PromptLoader({
   onCheckedLowerChange,
   taskParams,
   maxTokens,
+  userInputChecked,
+  onUserInputCheckedChange,
 }) {
   // Reference to the textarea element
   const textareaRef = useRef(null);
@@ -30,17 +32,7 @@ function PromptLoader({
       <div className="Loader-header">
         {/* Checkbox to toggle the active state */}
         <label className="toggle-Loader">
-          <input
-            type="checkbox"
-            checked={isActive}
-            onChange={() => {
-              onActiveChange();
-              console.log(
-                `Prompt loader ${taskName} active state changed:`,
-                !isActive
-              ); // Debugging
-            }}
-          />
+          <input type="checkbox" checked={isActive} onChange={onActiveChange} />
           Active
         </label>
 
@@ -48,10 +40,7 @@ function PromptLoader({
         <select
           className="select"
           value={taskName}
-          onChange={(e) => {
-            onTaskChange(e.target.value);
-            console.log(`Task changed for prompt loader:`, e.target.value); // Debugging
-          }}
+          onChange={(e) => onTaskChange(e.target.value)}
         >
           <option value="" disabled>
             Select a Task
@@ -66,17 +55,7 @@ function PromptLoader({
         </select>
 
         {/* Dropdown to select the tier */}
-        <select
-          className="select"
-          value={loaderTier}
-          onChange={(e) => {
-            onTierChange(e);
-            console.log(
-              `Tier changed for prompt loader ${taskName}:`,
-              e.target.value
-            ); // Debugging
-          }}
-        >
+        <select className="select" value={loaderTier} onChange={onTierChange}>
           <option value="" disabled>
             Select a Tier
           </option>
@@ -92,6 +71,7 @@ function PromptLoader({
           <span className="max-tokens">Max Tokens: {maxTokens}</span>
         )}
       </div>
+
       {/* Textarea to display the completion */}
       <textarea
         className="Loader-output"
@@ -99,39 +79,36 @@ function PromptLoader({
         value={completion}
         readOnly
       />
+
       <div className="Loader-inputs">
         <div className="checkbox-container">
-          <label>Select Inputs</label>
-          {/* Checkbox for user input */}
-          <label htmlFor="userText">
+          <label htmlFor={`user-input-${taskName}`}>Select Inputs</label>
+          <div>
             <input
               type="checkbox"
-              id="userText"
-              name="userText"
-              value="userText"
+              id={`user-input-${taskName}`}
+              checked={userInputChecked}
+              onChange={onUserInputCheckedChange}
             />
-            User Input
-          </label>
+            <label htmlFor={`user-input-${taskName}`}>User Input</label>
+          </div>
           {/* Render checkboxes for tierLowers */}
           {tierLowers.map((lower) => (
-            <label key={lower.id} htmlFor={lower.id}>
+            <div key={lower.id}>
               <input
                 type="checkbox"
-                id={lower.id}
-                name={lower.id}
+                id={`lower-tier-${lower.id}`}
                 value={lower.id}
                 checked={checkedLowers.some(
                   (checkedLower) => checkedLower.id === lower.id
                 )}
                 onChange={() => onCheckedLowerChange(lower)}
               />
-              {lower.taskName}
-            </label>
+              <label htmlFor={`lower-tier-${lower.id}`}>{lower.taskName}</label>
+            </div>
           ))}
         </div>
       </div>
-      {console.log("PromptLoader rendered for task:", taskName)}{" "}
-      {/* Debugging */}
     </div>
   );
 }
