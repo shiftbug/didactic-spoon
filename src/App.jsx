@@ -49,24 +49,27 @@ function App() {
     setPromptLoaders([...promptLoaders, newLoader]);
   };
 
-  const onCheckedLowerChange = (id, selectedLowerTierLoader) => {
+  const onCheckedLowerChange = (id, lowerId) => {
     setPromptLoaders((prevLoaders) =>
       prevLoaders.map((loader) => {
         if (loader.id === id) {
-          const lowerTierLoaderIndex = loader.checkedLowers.findIndex(
-            (lower) => lower.id === selectedLowerTierLoader.id
+          const lowerIndex = loader.checkedLowers.findIndex(
+            (lower) => lower.id === lowerId
           );
-          if (lowerTierLoaderIndex !== -1) {
+          if (lowerIndex !== -1) {
             return {
               ...loader,
               checkedLowers: loader.checkedLowers.filter(
-                (lower) => lower.id !== selectedLowerTierLoader.id
+                (lower) => lower.id !== lowerId
               ),
             };
           } else {
+            const selectedLower = promptLoaders.find(
+              (otherLoader) => otherLoader.id === lowerId
+            );
             return {
               ...loader,
-              checkedLowers: [...loader.checkedLowers, selectedLowerTierLoader],
+              checkedLowers: [...loader.checkedLowers, selectedLower],
             };
           }
         }
@@ -124,15 +127,14 @@ function App() {
     }
   };
 
-  const handleUserInputCheckedChange = (loaderId, checked) => {
-    // If 'checked' is an event, extract the checked value, otherwise use it directly
-    const isChecked = checked.target ? checked.target.checked : checked;
+  const handleUserInputCheckedChange = (loaderId, e) => {
+    const checked = e.target.checked;
     setPromptLoaders((prevLoaders) =>
       prevLoaders.map((loader) => {
         if (loader.id === loaderId) {
           return {
             ...loader,
-            userInputChecked: isChecked,
+            userInputChecked: checked,
           };
         }
         return loader;
@@ -157,8 +159,8 @@ function App() {
             key={loader.id}
             isActive={loader.isActive}
             taskName={loader.taskName}
-            onCheckedLowerChange={(lowerTierLoader) =>
-              onCheckedLowerChange(loader.id, lowerTierLoader)
+            onCheckedLowerChange={(lowerId) =>
+              onCheckedLowerChange(loader.id, lowerId)
             }
             completion={loader.completion}
             loaderTier={loader.loaderTier}
@@ -238,8 +240,8 @@ function App() {
             taskParams={taskParams}
             maxTokens={taskParams[loader.taskName]?.max_tokens || 0}
             userInputChecked={loader.userInputChecked}
-            onUserInputCheckedChange={(checked) =>
-              handleUserInputCheckedChange(loader.id, checked)
+            onUserInputCheckedChange={(e) =>
+              handleUserInputCheckedChange(loader.id, e)
             }
           />
         ))}

@@ -16,10 +16,8 @@ function PromptLoader({
   userInputChecked,
   onUserInputCheckedChange,
 }) {
-  // Reference to the textarea element
   const textareaRef = useRef(null);
 
-  // Use effect hook to adjust the height of the textarea based on its content
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -30,13 +28,11 @@ function PromptLoader({
   return (
     <div className="Loader">
       <div className="Loader-header">
-        {/* Checkbox to toggle the active state */}
         <label className="toggle-Loader">
           <input type="checkbox" checked={isActive} onChange={onActiveChange} />
           Active
         </label>
 
-        {/* Dropdown to select the task */}
         <select
           className="select"
           value={taskName}
@@ -45,7 +41,6 @@ function PromptLoader({
           <option value="" disabled>
             Select a Task
           </option>
-          {/* Render task options based on taskParams */}
           {taskParams &&
             Object.keys(taskParams).map((taskType) => (
               <option key={taskType} value={taskType}>
@@ -54,7 +49,6 @@ function PromptLoader({
             ))}
         </select>
 
-        {/* Dropdown to select the tier */}
         <select className="select" value={loaderTier} onChange={onTierChange}>
           <option value="" disabled>
             Select a Tier
@@ -66,13 +60,11 @@ function PromptLoader({
           ))}
         </select>
 
-        {/* Display the maximum tokens for the selected task */}
         {taskName && (
           <span className="max-tokens">Max Tokens: {maxTokens}</span>
         )}
       </div>
 
-      {/* Textarea to display the completion */}
       <textarea
         className="Loader-output"
         ref={textareaRef}
@@ -82,7 +74,7 @@ function PromptLoader({
 
       <div className="Loader-inputs">
         <div className="checkbox-container">
-          <label htmlFor={`user-input-${taskName}`}>Select Inputs</label>
+          <label>Select Inputs</label>
           <div>
             <input
               type="checkbox"
@@ -92,17 +84,15 @@ function PromptLoader({
             />
             <label htmlFor={`user-input-${taskName}`}>User Input</label>
           </div>
-          {/* Render checkboxes for tierLowers */}
           {tierLowers.map((lower) => (
             <div key={lower.id}>
               <input
                 type="checkbox"
                 id={`lower-tier-${lower.id}`}
-                value={lower.id}
                 checked={checkedLowers.some(
                   (checkedLower) => checkedLower.id === lower.id
                 )}
-                onChange={() => onCheckedLowerChange(lower)}
+                onChange={() => onCheckedLowerChange(lower.id)}
               />
               <label htmlFor={`lower-tier-${lower.id}`}>{lower.taskName}</label>
             </div>

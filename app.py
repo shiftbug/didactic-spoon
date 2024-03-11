@@ -7,7 +7,6 @@ from llm import get_completion as llm_call
 from flask_cors import CORS
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# Set up a ThreadPoolExecutor for making llm_calls asynchronously
 executor = ThreadPoolExecutor()
 
 app = Flask(__name__)
@@ -38,9 +37,9 @@ def tasks():
 
 @app.route('/process_text', methods=['POST'])
 def process_text():
-    text = request.form['text']  # Get the text from the form data
-    processed_text = text  # Placeholder for actual text processing logic
-    return jsonify(processed_text=processed_text)  # Return the processed text as JSON
+    text = request.form['text']
+    processed_text = text
+    return jsonify(processed_text=processed_text)
 
 @app.route('/submit', methods=['POST', 'OPTIONS'])
 def submit():
@@ -80,12 +79,12 @@ def submit():
 
         max_tier = max(int(task['tier']) for task in tasks)
 
-        futures = []  # Store the futures for each task
-
         for tier in range(1, max_tier + 1):
             tier_tasks = [task for task in tasks if int(task['tier']) == tier]
 
             app.logger.debug(f"Processing tasks for tier {tier}: {tier_tasks}")
+
+            futures = []  # Store the futures for each task in the current tier
 
             for task in tier_tasks:
                 instance_id = task['instance_id']
@@ -121,7 +120,7 @@ def submit():
 
                     app.logger.debug(f"Sending task configuration to llm_call for task {instance_id}: {task_config}")
                     future = executor.submit(llm_call, task_config)
-                    futures.append((future, instance_id, engine_id))  # Store the future along with instance_id and engine_id
+                    futures.append((future, instance_id, engine_id))
                 else:
                     app.logger.warning(f"No task configuration found for {engine_id}")
                     log_entry["completions"].append({
@@ -129,21 +128,21 @@ def submit():
                         "error": f"No task configuration found for {engine_id}"
                     })
 
-        # Wait for all futures to complete
-        for future, instance_id, engine_id in futures:
-            try:
-                completion = future.result()
-                log_entry["completions"].append({
-                    "instance_id": instance_id,
-                    "engine_id": engine_id,
-                    "completion": completion
-                })
-            except Exception as exc:
-                app.logger.error(f"Task {instance_id} generated an exception: {exc}")
-                log_entry["completions"].append({
-                    "instance_id": instance_id,
-                    "error": str(exc)
-                })
+            # Wait for all futures in the current tier to complete before moving to the next tier
+            for future, instance_id, engine_id in futures:
+                try:
+                    completion = future.result()
+                    log_entry["completions"].append({
+                        "instance_id": instance_id,
+                        "engine_id": engine_id,
+                        "completion": completion
+                    })
+                except Exception as exc:
+                    app.logger.error(f"Task {instance_id} generated an exception: {exc}")
+                    log_entry["completions"].append({
+                        "instance_id": instance_id,
+                        "error": str(exc)
+                    })
 
         # Asynchronously write the log entry
         threading.Thread(target=write_log, args=(log_id, log_entry)).start()
