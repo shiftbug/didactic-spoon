@@ -28,9 +28,8 @@ function App() {
 
   const fetchTaskParams = async () => {
     try {
-      const response = await fetch("task.json");
-      const data = await response.json();
-      setTaskParams(data);
+      const response = await axios.get("http://127.0.0.1:5000/tasks");
+      setTaskParams(response.data);
     } catch (error) {
       console.error("Error fetching task parameters:", error);
     }
@@ -142,9 +141,31 @@ function App() {
     );
   };
 
+  const updateTaskParams = (newTaskParams) => {
+    setTaskParams(newTaskParams);
+  };
+
+  const handleTaskChange = (previousTaskName, updatedTasks) => {
+    setPromptLoaders((prevLoaders) =>
+      prevLoaders.map((loader) => {
+        if (loader.taskName === previousTaskName) {
+          return {
+            ...loader,
+            taskName: updatedTasks[loader.taskName]?.taskName || "",
+          };
+        }
+        return loader;
+      })
+    );
+  };
+
   return (
     <div className="App">
-      <ProfileEditor className="task-m" />
+      <ProfileEditor
+        className="task-m"
+        onTaskParamsChange={updateTaskParams}
+        onTaskChange={handleTaskChange}
+      />
       <UserInput
         className="user-input"
         onChange={(e) => setUserText(e.target.value)}

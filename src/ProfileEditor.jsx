@@ -4,19 +4,24 @@ import Slider from "@mui/material/Slider";
 import TextField from "@mui/material/TextField";
 import "./App.css";
 
-const ProfileEditor = () => {
+const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
   const [tasks, setTasks] = useState({});
   const [selectedTaskName, setSelectedTaskName] = useState("");
   const [selectedTask, setSelectedTask] = useState(null);
 
   useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = () => {
     axios
       .get("http://127.0.0.1:5000/tasks")
       .then((response) => {
         setTasks(response.data);
+        onTaskParamsChange(response.data);
       })
       .catch((error) => console.error("Error fetching tasks:", error));
-  }, []);
+  };
 
   const handleTaskSelection = (e) => {
     const taskName = e.target.value;
@@ -50,18 +55,35 @@ const ProfileEditor = () => {
 
     setSelectedTask(updatedTask);
     setTasks({ ...tasks, [selectedTaskName]: updatedTask });
+    // Notify the App component about the task change
+    // Notify the App component about the task change
+    onTaskChange(selectedTaskName, {
+      ...tasks,
+      [selectedTaskName]: updatedTask,
+    });
   };
 
   const handleSave = () => {
+    // Update the tasks state with the modified selected task
+    setTasks((prevTasks) => ({
+      ...prevTasks,
+      [selectedTaskName]: selectedTask,
+    }));
+
     // Post the current state of tasks to the server endpoint
     axios
-      .post("http://127.0.0.1:5000/tasks", tasks)
+      .post("http://127.0.0.1:5000/tasks", {
+        ...tasks,
+        [selectedTaskName]: selectedTask,
+      })
       .then((response) => {
         // Log the server's response upon successful update
         console.log("Tasks updated:", response.data);
         // Reset selected task and name to hide the settings panel
         setSelectedTask(null);
         setSelectedTaskName("");
+        // Fetch the updated tasks and notify the parent component
+        fetchTasks();
       })
       .catch((error) => {
         // Log an error if the update fails
@@ -72,25 +94,33 @@ const ProfileEditor = () => {
   const handleTaskNameChange = (e) => {
     const newTaskName = e.target.value;
     const updatedTasks = { ...tasks };
+    updatedTasks[newTaskName] = { ...selectedTask };
     delete updatedTasks[selectedTaskName];
-    updatedTasks[newTaskName] = selectedTask;
 
     setTasks(updatedTasks);
     setSelectedTaskName(newTaskName);
   };
 
   const handleAddTask = () => {
-    const exampleTask = tasks["Example"]; // Assuming 'Example' is a key in your tasks object
-    if (!exampleTask) {
-      console.error("Example task not found.");
-      return;
-    }
-
     const newTaskName = `NewTask_${Date.now()}`; // Generate a unique task name
-    const newTask = { ...exampleTask }; // Create a copy of the example task
+    const newTask = {
+      model: "gpt-3.5-turbo",
+      max_tokens: 500,
+      temperature: 1,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "user",
+          content: "<<user_input>>, context if any: <<completions>>",
+        },
+      ],
+    }; // Create a new task object with default values
 
     // Update the tasks state with the new task
-    setTasks({ ...tasks, [newTaskName]: newTask });
+    setTasks((prevTasks) => ({ ...prevTasks, [newTaskName]: newTask }));
     setSelectedTaskName(newTaskName); // Select the new task for editing
     setSelectedTask(newTask);
   };

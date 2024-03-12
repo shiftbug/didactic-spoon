@@ -15,6 +15,7 @@ function PromptLoader({
   maxTokens,
   userInputChecked,
   onUserInputCheckedChange,
+  promptLoaders,
 }) {
   const textareaRef = useRef(null);
 
