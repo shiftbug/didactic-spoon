@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import PromptLoader from "./PromptLoader";
 import UserInput from "./UserInput";
@@ -48,40 +48,49 @@ function App() {
     setPromptLoaders([...promptLoaders, newLoader]);
   };
 
-  const onCheckedLowerChange = (id, lowerId) => {
-    setPromptLoaders((prevLoaders) =>
-      prevLoaders.map((loader) => {
-        if (loader.id === id) {
-          const lowerIndex = loader.checkedLowers.findIndex(
-            (lower) => lower.id === lowerId
-          );
-          if (lowerIndex !== -1) {
-            return {
-              ...loader,
-              checkedLowers: loader.checkedLowers.filter(
-                (lower) => lower.id !== lowerId
-              ),
-            };
-          } else {
-            const selectedLower = promptLoaders.find(
-              (otherLoader) => otherLoader.id === lowerId
+  const onCheckedLowerChange = useCallback(
+    (id, lowerId) => {
+      setPromptLoaders((prevLoaders) =>
+        prevLoaders.map((loader) => {
+          if (loader.id === id) {
+            const lowerIndex = loader.checkedLowers.findIndex(
+              (lower) => lower.id === lowerId
             );
-            return {
-              ...loader,
-              checkedLowers: [...loader.checkedLowers, selectedLower],
-            };
+            if (lowerIndex !== -1) {
+              return {
+                ...loader,
+                checkedLowers: loader.checkedLowers.filter(
+                  (lower) => lower.id !== lowerId
+                ),
+              };
+            } else {
+              const selectedLower = promptLoaders.find(
+                (otherLoader) => otherLoader.id === lowerId
+              );
+              return {
+                ...loader,
+                checkedLowers: [...loader.checkedLowers, selectedLower],
+              };
+            }
           }
-        }
-        return loader;
-      })
-    );
-  };
+          return loader;
+        })
+      );
+    },
+    [promptLoaders]
+  );
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const activeTasks = promptLoaders.filter((loader) => loader.isActive);
 
     if (activeTasks.length === 0) {
       console.error("No active prompt loaders found.");
+      return;
+    }
+
+    const invalidTasks = activeTasks.filter((loader) => !loader.taskName);
+    if (invalidTasks.length > 0) {
+      console.error("Please select a task for all active prompt loaders.");
       return;
     }
 
@@ -113,9 +122,7 @@ function App() {
           );
           return {
             ...loader,
-            completion: completionData
-              ? completionData.completion
-              : "No completion received.",
+            completion: completionData ? completionData.completion : "",
           };
         }
         return loader;
@@ -124,9 +131,9 @@ function App() {
     } catch (error) {
       console.error("Error submitting loaders:", error);
     }
-  };
+  }, [promptLoaders, userText]);
 
-  const handleUserInputCheckedChange = (loaderId, e) => {
+  const handleUserInputCheckedChange = useCallback((loaderId, e) => {
     const checked = e.target.checked;
     setPromptLoaders((prevLoaders) =>
       prevLoaders.map((loader) => {
@@ -139,9 +146,13 @@ function App() {
         return loader;
       })
     );
-  };
+  }, []);
 
   const updateTaskParams = (newTaskParams) => {
+    setTaskParams(newTaskParams);
+  };
+
+  const updateAvailableTasks = (newTaskParams) => {
     setTaskParams(newTaskParams);
   };
 
@@ -163,7 +174,7 @@ function App() {
     <div className="App">
       <ProfileEditor
         className="task-m"
-        onTaskParamsChange={updateTaskParams}
+        onTaskParamsChange={updateAvailableTasks}
         onTaskChange={handleTaskChange}
       />
       <UserInput
@@ -244,13 +255,13 @@ function App() {
 
               setPromptLoaders(updatedLoadersWithCheckedLowers);
             }}
-            onTierChange={(e) => {
+            onTierChange={(value) => {
               const updatedLoaders = promptLoaders.map(
                 (otherLoader, otherIndex) => {
                   if (index === otherIndex) {
                     return {
                       ...otherLoader,
-                      loaderTier: parseInt(e.target.value),
+                      loaderTier: value,
                     };
                   }
                   return otherLoader;
@@ -264,6 +275,7 @@ function App() {
             onUserInputCheckedChange={(e) =>
               handleUserInputCheckedChange(loader.id, e)
             }
+            promptLoaders={promptLoaders}
           />
         ))}
       </div>

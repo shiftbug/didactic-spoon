@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
+import PropTypes from "prop-types";
 
 function PromptLoader({
   onActiveChange,
@@ -8,7 +9,6 @@ function PromptLoader({
   taskName,
   completion,
   loaderTier,
-  tierLowers,
   checkedLowers,
   onCheckedLowerChange,
   taskParams,
@@ -24,7 +24,30 @@ function PromptLoader({
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [completion, taskName]);
+  }, [completion]);
+
+  const tierLowers = useMemo(() => {
+    return (
+      promptLoaders?.filter(
+        (otherLoader) =>
+          otherLoader.loaderTier < loaderTier && otherLoader.isActive
+      ) || []
+    );
+  }, [promptLoaders, loaderTier]);
+
+  const handleTaskChange = useCallback(
+    (taskName) => {
+      onTaskChange(taskName);
+    },
+    [onTaskChange]
+  );
+
+  const handleTierChange = useCallback(
+    (e) => {
+      onTierChange(parseInt(e.target.value));
+    },
+    [onTierChange]
+  );
 
   return (
     <div className="Loader">
@@ -37,7 +60,7 @@ function PromptLoader({
         <select
           className="select"
           value={taskName}
-          onChange={(e) => onTaskChange(e.target.value)}
+          onChange={(e) => handleTaskChange(e.target.value)}
         >
           <option value="" disabled>
             Select a Task
@@ -50,7 +73,11 @@ function PromptLoader({
             ))}
         </select>
 
-        <select className="select" value={loaderTier} onChange={onTierChange}>
+        <select
+          className="select"
+          value={loaderTier}
+          onChange={handleTierChange}
+        >
           <option value="" disabled>
             Select a Tier
           </option>
@@ -69,7 +96,7 @@ function PromptLoader({
       <textarea
         className="Loader-output"
         ref={textareaRef}
-        value={completion}
+        value={completion || "No completion available"}
         readOnly
       />
 
@@ -103,5 +130,22 @@ function PromptLoader({
     </div>
   );
 }
+
+PromptLoader.propTypes = {
+  onActiveChange: PropTypes.func.isRequired,
+  onTaskChange: PropTypes.func.isRequired,
+  onTierChange: PropTypes.func.isRequired,
+  isActive: PropTypes.bool.isRequired,
+  taskName: PropTypes.string.isRequired,
+  completion: PropTypes.string,
+  loaderTier: PropTypes.number.isRequired,
+  checkedLowers: PropTypes.array.isRequired,
+  onCheckedLowerChange: PropTypes.func.isRequired,
+  taskParams: PropTypes.object,
+  maxTokens: PropTypes.number,
+  userInputChecked: PropTypes.bool.isRequired,
+  onUserInputCheckedChange: PropTypes.func.isRequired,
+  promptLoaders: PropTypes.array,
+};
 
 export default PromptLoader;

@@ -33,7 +33,6 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
     const { name, value, type } = e.target;
     let updatedValue = value;
 
-    // Parse the value as a float if the input type is 'number' or 'range'
     if (type === "number" || type === "range") {
       updatedValue = parseFloat(value);
     }
@@ -55,8 +54,6 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
 
     setSelectedTask(updatedTask);
     setTasks({ ...tasks, [selectedTaskName]: updatedTask });
-    // Notify the App component about the task change
-    // Notify the App component about the task change
     onTaskChange(selectedTaskName, {
       ...tasks,
       [selectedTaskName]: updatedTask,
@@ -64,29 +61,24 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
   };
 
   const handleSave = () => {
-    // Update the tasks state with the modified selected task
     setTasks((prevTasks) => ({
       ...prevTasks,
-      [selectedTaskName]: selectedTask,
+      [setSelectedTaskName]: selectedTaskName,
     }));
 
-    // Post the current state of tasks to the server endpoint
     axios
       .post("http://127.0.0.1:5000/tasks", {
         ...tasks,
         [selectedTaskName]: selectedTask,
       })
       .then((response) => {
-        // Log the server's response upon successful update
         console.log("Tasks updated:", response.data);
-        // Reset selected task and name to hide the settings panel
         setSelectedTask(null);
         setSelectedTaskName("");
-        // Fetch the updated tasks and notify the parent component
         fetchTasks();
+        onTaskParamsChange(response.data); // Update available tasks in App.jsx
       })
       .catch((error) => {
-        // Log an error if the update fails
         console.error("Error updating tasks:", error);
       });
   };
@@ -102,7 +94,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
   };
 
   const handleAddTask = () => {
-    const newTaskName = `NewTask_${Date.now()}`; // Generate a unique task name
+    const newTaskName = `NewTask_${Date.now()}`;
     const newTask = {
       model: "gpt-3.5-turbo",
       max_tokens: 500,
@@ -117,11 +109,10 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
           content: "<<user_input>>, context if any: <<completions>>",
         },
       ],
-    }; // Create a new task object with default values
+    };
 
-    // Update the tasks state with the new task
     setTasks((prevTasks) => ({ ...prevTasks, [newTaskName]: newTask }));
-    setSelectedTaskName(newTaskName); // Select the new task for editing
+    setSelectedTaskName(newTaskName);
     setSelectedTask(newTask);
   };
 
@@ -136,12 +127,9 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
   ];
 
   return (
-    <div>
+    <div className="profile-editor">
       <h2>Profile Editor</h2>
-      <div
-        className="user-input"
-        style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
-      >
+      <div className="user-input">
         <select
           className="select"
           onChange={handleTaskSelection}
@@ -162,15 +150,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
       {selectedTask && (
         <form>
           <TextField
-            InputLabelProps={{ style: { color: "lightgray" } }}
-            InputProps={{
-              style: {
-                color: "lightgray",
-                height: "40px",
-                padding: "0 14px",
-                fontSize: "0.875rem",
-              },
-            }}
+            className="text-field"
             label="Profile Name"
             value={selectedTaskName || ""}
             onChange={handleTaskNameChange}
@@ -191,15 +171,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
                         style={{ width: "100%" }}
                       >
                         <TextField
-                          InputLabelProps={{ style: { color: "lightgray" } }}
-                          InputProps={{
-                            style: {
-                              color: "lightgray",
-                              height: "auto",
-                              padding: "14px",
-                              fontSize: "1rem",
-                            },
-                          }}
+                          className="text-field"
                           label="System Message"
                           name={`system-message-${index}`}
                           value={message.content || ""}
@@ -222,15 +194,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
                         style={{ width: "100%" }}
                       >
                         <TextField
-                          InputLabelProps={{ style: { color: "lightgray" } }}
-                          InputProps={{
-                            style: {
-                              color: "lightgray",
-                              height: "auto",
-                              padding: "14px",
-                              fontSize: "1rem",
-                            },
-                          }}
+                          className="text-field"
                           label="User Message"
                           name={`user-message-${index}`}
                           value={message.content || ""}
@@ -275,13 +239,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
                   }}
                 >
                   {isNumber && (
-                    <div
-                      style={{
-                        width: "200px",
-                        marginRight: "100px",
-                        marginLeft: "100px",
-                      }}
-                    >
+                    <div className="slider">
                       <Slider
                         value={typeof value === "number" ? value : minVal}
                         onChange={(e, newValue) =>
@@ -300,21 +258,12 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
                         step={stepVal}
                         min={minVal}
                         max={maxVal}
-                        style={{ color: "lightgray" }}
                       />
                     </div>
                   )}
                   <div style={{ flex: 1 }}>
                     <TextField
-                      InputLabelProps={{ style: { color: "lightgray" } }}
-                      InputProps={{
-                        style: {
-                          color: "lightgray",
-                          height: "40px",
-                          padding: "0 14px",
-                          fontSize: "0.875rem",
-                        },
-                      }}
+                      className="text-field"
                       label={key
                         .replace(/_/g, " ")
                         .replace(/^\w/, (c) => c.toUpperCase())}
