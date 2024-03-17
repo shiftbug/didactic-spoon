@@ -11,3 +11,7 @@ done? TAKE AWAY INSTANT USER ensure state update for all changes - yes but, joki
 add local model func
 add recipe cards load/save
 DOING refactor code!
+
+add semantic search over task definitions for autoselect completions styles, using 'functioncalling/jsonmode" for structured bubilding of dynamic recipes.
+
+allow chained prompt/response "conversation history" pairing in recipes/main

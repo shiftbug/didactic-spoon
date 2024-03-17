@@ -75,8 +75,6 @@ def submit():
         with open(task_file_path) as f:
             task_configs = json.load(f)
 
-        app.logger.debug(f"Loaded task configurations: {task_configs}")
-
         max_tier = max(int(task['tier']) for task in tasks)
 
         for tier in range(1, max_tier + 1):
