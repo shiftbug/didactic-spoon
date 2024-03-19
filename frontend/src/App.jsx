@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import PromptLoader from "./PromptLoader";
 import UserInput from "./UserInput";
@@ -28,7 +28,7 @@ function App() {
 
   const fetchTaskParams = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:5000/tasks");
+      const response = await axios.get("http://localhost:5000/tasks");
       setTaskParams(response.data);
     } catch (error) {
       console.error("Error fetching task parameters:", error);
@@ -108,7 +108,7 @@ function App() {
     console.log("Tasks sent to backend:", tasks);
 
     try {
-      const response = await axios.post("http://127.0.0.1:5000/submit", {
+      const response = await axios.post("http://localhost:5000/submit", {
         tasks: tasks,
         userText: userText,
       });

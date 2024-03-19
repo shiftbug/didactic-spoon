@@ -26,7 +26,7 @@ def get_completion(task_config):
             logging.debug("Using ollama endpoint for model: %s", task_config['model'])
             # Initialize the OpenAI client with the ollama endpoint
             ollama_client = OpenAI(
-                base_url='http://localhost:11434/v1/',  # required but ignored
+                base_url='http://host.docker.internal:11434/v1/',  # required but ignored
                 api_key='ollama',
             )
 

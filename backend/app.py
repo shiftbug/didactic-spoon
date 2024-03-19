@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 executor = ThreadPoolExecutor()
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": ["http://localhost:5173", "http://frontend:5173"]}})
 
 LOGS_DIR = 'logs'
 TASK_FILE_PATH = 'task.json'
@@ -156,4 +156,4 @@ def submit():
         return jsonify({'error': 'An internal server error occurred.'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

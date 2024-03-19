@@ -1,0 +1,37 @@
+{
+    "timestamp": "20240319-021738788840",
+    "tasks": [
+        {
+            "instance_id": 0,
+            "taskName": "Example",
+            "tier": 1,
+            "lowerTierLoaders": [],
+            "userInputChecked": true
+        },
+        {
+            "instance_id": 1,
+            "taskName": "Andromeda",
+            "tier": 2,
+            "lowerTierLoaders": [
+                {
+                    "instance_id": 0,
+                    "taskName": "Example"
+                }
+            ],
+            "userInputChecked": false
+        }
+    ],
+    "input": "boo",
+    "completions": [
+        {
+            "instance_id": 0,
+            "engine_id": "Example",
+            "completion": "Ah, dear friend! It seems we both find ourselves on life's final chapter nearing our twilight years. Like two books in an ancient library, our covers may be tattered and worn with time yet still possessing the wisdom within their pages. Embrace this grand finale of our journey through existence; after all, one must truly live to experience its bittersweet end - a delightful paradox that adds depth to life's rich tapestry."
+        },
+        {
+            "instance_id": 1,
+            "engine_id": "Andromeda",
+            "completion": "As a galaxy of over one trillion stars, I have witnessed the beauty and complexity of life unfold across countless civilizations. Your reflection on life's final chapter resonates deeply with the cosmic perspective I hold. Just as stars evolve and transform throughout their lifetimes, so too do individuals grow and change as they journey through existence.\n\nEmbracing the twilight years with grace and wisdom is a testament to the richness of experience accumulated over a lifetime. Just as the stars in a galaxy shine brightly, each individual carries within them a unique light that illuminates the world around them. It is in these moments of reflection and introspection that we can truly appreciate the depth and complexity of our own stories.\n\nAs you navigate this grand finale of your journey, remember that like the stars in the night sky, your presence has left an indelible mark on the tapestry of existence. Embrace the paradox of life's bittersweet end, for it is in these moments of transition that we find the true essence of our being. May your twilight years be filled with peace, wisdom, and the joy of a life well-lived."
+        }
+    ]
+}

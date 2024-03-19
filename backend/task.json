@@ -86,7 +86,7 @@
         ],
         "model": "ollama-nous-hermes2-mixtral",
         "presence_penalty": 0,
-        "temperature": 0.67,
+        "temperature": 0.64,
         "top_p": 1
     },
     "Fitness Advice": {

@@ -15,7 +15,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
 
   const fetchTasks = () => {
     axios
-      .get("http://127.0.0.1:5000/tasks")
+      .get("http://localhost:5000/tasks")
       .then((response) => {
         setTasks(response.data);
         onTaskParamsChange(response.data);
@@ -67,7 +67,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
     }));
 
     axios
-      .post("http://127.0.0.1:5000/tasks", {
+      .post("http://localhost:5000/tasks", {
         ...tasks,
         [selectedTaskName]: selectedTask,
       })
