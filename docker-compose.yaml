@@ -4,25 +4,38 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.backend
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
+    # Only expose the backend service to other Docker services, not to the host
+    # ports:
+    #   - "5000:5000"
     environment:
-      - FLASK_ENV=development
+      - FLASK_ENV=production
       - FLASK_APP=app.py
+    restart: on-failure
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - app-network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.frontend
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - "5173:80" # Map Nginx's port 80 to the host's port 5173
     depends_on:
       - backend
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
+    restart: on-failure
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

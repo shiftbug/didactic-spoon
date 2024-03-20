@@ -28,7 +28,7 @@ function App() {
 
   const fetchTaskParams = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/tasks");
+      const response = await axios.get("/api/tasks");
       setTaskParams(response.data);
     } catch (error) {
       console.error("Error fetching task parameters:", error);
@@ -108,7 +108,7 @@ function App() {
     console.log("Tasks sent to backend:", tasks);
 
     try {
-      const response = await axios.post("http://localhost:5000/submit", {
+      const response = await axios.post("/api/tasks", {
         tasks: tasks,
         userText: userText,
       });

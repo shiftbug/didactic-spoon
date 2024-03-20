@@ -9,6 +9,7 @@ Flask
 Flask-Cors
 Flask-JWT-Extended==4.6.0
 Flask-Login==0.6.3
+gunicorn==21.2.0
 h11
 httpcore
 httpx

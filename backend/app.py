@@ -6,11 +6,15 @@ import threading
 from llm import get_completion as llm_call
 from flask_cors import CORS
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import logging
+from logging.handlers import RotatingFileHandler
+
 
 executor = ThreadPoolExecutor()
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": ["http://localhost:5173", "http://frontend:5173"]}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
+
 
 LOGS_DIR = 'logs'
 TASK_FILE_PATH = 'task.json'
@@ -18,10 +22,27 @@ TASK_FILE_PATH = 'task.json'
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
 
+if not app.debug:
+    handler = RotatingFileHandler('logs/app.log', maxBytes=100000, backupCount=3)
+    handler.setLevel(logging.WARNING)
+    app.logger.addHandler(handler)
+
 def write_log(log_id, log_entry):
     log_file_path = os.path.join(LOGS_DIR, f"log_{log_id}.json")
     with open(log_file_path, 'w') as log_file:
         json.dump(log_entry, log_file, ensure_ascii=False, indent=4)
+
+@app.route('/health')
+def health():
+    return jsonify(status='healthy')
+
+@app.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return jsonify(error=str(e)), 500
 
 @app.route('/tasks', methods=['GET', 'POST'])
 def tasks():
