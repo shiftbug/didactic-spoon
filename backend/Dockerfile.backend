@@ -7,7 +7,7 @@ WORKDIR /app
 # Install build tools and dependencies
 RUN apt-get update && \
     apt-get install -y build-essential gcc
-    
+
 # Copy only the requirements.txt file to use Docker's cache
 COPY requirements.txt .
 
@@ -22,6 +22,12 @@ RUN groupadd -r myuser && useradd --no-log-init -r -g myuser myuser
 
 # Ensure the logs directory exists and set the correct permissions
 RUN mkdir -p logs && chown -R myuser:myuser logs
+
+# Copy the task.json file to the working directory
+COPY task.json .
+
+# Set the appropriate ownership and permissions for the task.json file
+RUN chown myuser task.json && chmod 600 task.json
 
 # Switch to the non-root user for security
 USER myuser

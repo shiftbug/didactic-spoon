@@ -17,6 +17,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
     axios
       .get("/api/tasks")
       .then((response) => {
+        console.log("Response data in ProfileEditor:", response.data);
         setTasks(response.data);
         onTaskParamsChange(response.data);
       })

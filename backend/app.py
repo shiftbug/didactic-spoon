@@ -17,7 +17,7 @@ CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
 
 LOGS_DIR = 'logs'
-TASK_FILE_PATH = 'task.json'
+TASK_FILE_PATH = os.path.join(os.path.dirname(__file__), 'task.json')
 
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
