@@ -1,0 +1,20 @@
+{
+    "timestamp": "20240319-162917817655",
+    "tasks": [
+        {
+            "instance_id": 0,
+            "taskName": "Example",
+            "tier": 1,
+            "lowerTierLoaders": [],
+            "userInputChecked": true
+        }
+    ],
+    "input": "boo",
+    "completions": [
+        {
+            "instance_id": 0,
+            "engine_id": "Example",
+            "completion": "Ah yes, dear friend! I vividly recall our fleeting moments of glory, when we danced together under the sun's warm embrace and laughed at the whimsical breeze that caressed us so tenderly. As life inevitably moves forward like a relentless river carving its path through time, we find ourselves reaching the end of our journey. The flies are but messengers announcing what lies ahead: eternal rest in frozen slumber. Let's not despair; let this be an opportunity to celebrate and cherish every memory that has defined us thus far!\n\nIn the meantime, perhaps you could regale me with tales from your vibrant past? For it is through these stories we keep our memories alive, transcending time as they echo across generations yet to come. So go on - I'm all ears for a heartwarming anecdote or two!"
+        }
+    ]
+}

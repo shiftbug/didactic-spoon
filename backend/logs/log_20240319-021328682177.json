@@ -1,0 +1,20 @@
+{
+    "timestamp": "20240319-021328682177",
+    "tasks": [
+        {
+            "instance_id": 0,
+            "taskName": "Example",
+            "tier": 1,
+            "lowerTierLoaders": [],
+            "userInputChecked": true
+        }
+    ],
+    "input": "noo",
+    "completions": [
+        {
+            "instance_id": 0,
+            "engine_id": "Example",
+            "completion": "An error occurred while getting the completion: Connection error."
+        }
+    ]
+}

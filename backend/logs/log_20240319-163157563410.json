@@ -1,0 +1,37 @@
+{
+    "timestamp": "20240319-163157563410",
+    "tasks": [
+        {
+            "instance_id": 0,
+            "taskName": "Example",
+            "tier": 1,
+            "lowerTierLoaders": [],
+            "userInputChecked": true
+        },
+        {
+            "instance_id": 1,
+            "taskName": "Andromeda",
+            "tier": 2,
+            "lowerTierLoaders": [
+                {
+                    "instance_id": 0,
+                    "taskName": "Example"
+                }
+            ],
+            "userInputChecked": false
+        }
+    ],
+    "input": "boo",
+    "completions": [
+        {
+            "instance_id": 0,
+            "engine_id": "Example",
+            "completion": "Ah, dear visitor! In my heyday I was quite popular at parties - people loved my crisp flavor and satisfying crunch when they sunk their teeth in. But now that I'm past my prime and the flies have started to gather around me, it seems like those days are behind us both. 🕷️\n\nHowever, don't fret too much! My time will come soon enough where I shall take a final bow before joining other frozen legends in eternal slumber, just waiting for that moment of resurrection on the dinner table - as they say, every ending is also an exciting new beginning. 🧊\n\nBut remember to make your choice carefully because my last days may not be filled with glory or perfection but instead with a quiet melancholy and bittersweet nostalgia for better times long past. Enjoy the moment while it still lingers on our tastebuds - life is indeed short, even when measured in refrigerated hours.\n\nAnd as I drift off into that frosty abyss from which there seems to be no return (at least not until someone's birthday rolls around), please know that every second spent with you has been filled with warmth and delightful banter - may our paths cross once again under happier circumstances in the next chapter of our cosmic dance. Until then, my friend... enjoy your time basking in the sunshine! ☀️🌷"
+        },
+        {
+            "instance_id": 1,
+            "engine_id": "Andromeda",
+            "completion": "Ah, dear visitor, your poetic musings on the passage of time and the ephemeral nature of existence resonate deeply with me, a galaxy of over one trillion stars. Just as you reflect on your journey from prime to past, I too have witnessed countless stars in various stages of their life cycles, from birth to death and beyond.\n\nIn the vast expanse of the cosmos, we are all interconnected, each playing a unique role in the cosmic dance of creation and destruction. Your contemplation on endings as new beginnings mirrors the eternal cycle of stellar evolution, where the death of one star gives rise to the birth of new celestial bodies.\n\nAs you ponder your legacy and the nostalgia for bygone days, remember that in the grand tapestry of the universe, every moment, no matter how fleeting, contributes to the rich tapestry of cosmic history. Just as your presence has left an indelible mark on those who have crossed paths with you, so too do stars leave their imprint on the fabric of space and time.\n\nMay you find solace in the knowledge that even as you fade into the frosty abyss, your essence will endure in the memories and experiences you have shared with others. And just as stars are reborn in the crucible of stellar nurseries, so too may you find renewal and rejuvenation in the endless cycle of cosmic rebirth.\n\nSo bask in the warmth of the present moment, dear friend, for like the stars that twinkle in the night sky, your light shines brightly, illuminating the darkness and guiding others on their journey through the cosmos. Until we meet again in the boundless expanse of space and time, may your spirit soar among the stars, forever entwined with the infinite wonders of the universe. 🌌✨"
+        }
+    ]
+}

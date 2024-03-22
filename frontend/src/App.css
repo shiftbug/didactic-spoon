@@ -1,0 +1,234 @@
+#root {
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.App {
+  width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.user-input,
+.Loader-output,
+.prompt-Loaders {
+  width: 100%;
+  min-width: auto;
+  margin: 10px auto;
+}
+
+.text-input,
+.Loader-output {
+  width: 100%;
+  color: white;
+  background-color: #1a1a1a;
+  padding: 7px 18px;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.Loader-output:empty::before {
+  content: "No completion available";
+  color: #888;
+}
+
+.Loader-output:not(:empty) {
+  color: white;
+}
+
+.Loader-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.select,
+.button {
+  height: 36px;
+  color: white;
+  padding: 7px 18px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  border: 1px solid transparent;
+  transition: border-color 0.25s;
+}
+
+.select:hover,
+.button:hover {
+  border-color: #646cff;
+}
+
+.select:focus,
+.select:focus-visible,
+.button:focus,
+.button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.add-profile-button {
+  background-color: #1a1a1a;
+  color: white;
+  font-size: 16px;
+  padding: 7px 18px;
+  height: 36px;
+  margin: 4px 12px;
+}
+
+.select.tier-select {
+  width: 33%;
+  margin-left: 10px;
+}
+
+.select.task-select {
+  flex: 1;
+}
+
+.max-tokens {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 12px;
+}
+
+.toggle-Loader {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.checkbox-input {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.Loader-footer {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.Loader-inputs {
+  margin-left: 20px;
+}
+
+.Loader-inputs label {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.profile-editor {
+  margin-bottom: 20px;
+}
+
+.profile-editor h2 {
+  margin-bottom: 10px;
+}
+
+.profile-editor .user-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.profile-editor .text-field {
+  margin-bottom: 5px;
+}
+
+.profile-editor .text-field label {
+  color: lightgray;
+}
+
+.profile-editor .text-field input {
+  color: lightgray;
+  height: 40px;
+  padding: 0 14px;
+  font-size: 0.875rem;
+}
+
+.profile-editor .text-field textarea {
+  color: lightgray;
+  height: auto;
+  padding: 14px;
+  font-size: 1rem;
+}
+
+.profile-editor .slider {
+  width: 200px;
+  margin-right: 100px;
+  margin-left: 100px;
+  color: lightgray;
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+@media (max-width: 600px) {
+  .App {
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  .select,
+  .button {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .profile-editor .slider {
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+  }
+}

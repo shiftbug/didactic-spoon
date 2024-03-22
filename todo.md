@@ -7,11 +7,11 @@ DONE! connect user input button.
 
 done. add profile button at top not bottom
 done? TAKE AWAY INSTANT USER ensure state update for all changes - yes but, joking right? task never done.
+DOING refactor code!never done
+DONE add local model func
 
-add local model func
 add recipe cards load/save
-DOING refactor code!
 
-add semantic search over task definitions for autoselect completions styles, using 'functioncalling/jsonmode" for structured bubilding of dynamic recipes.
+add semantic search over task definitions for autoselect completions styles, using 'functioncalling/jsonmode" for structured building of dynamic recipes.
 
 allow chained prompt/response "conversation history" pairing in recipes/main

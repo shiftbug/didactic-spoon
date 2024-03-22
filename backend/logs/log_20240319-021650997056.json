@@ -1,0 +1,20 @@
+{
+    "timestamp": "20240319-021650997056",
+    "tasks": [
+        {
+            "instance_id": 0,
+            "taskName": "Example",
+            "tier": 1,
+            "lowerTierLoaders": [],
+            "userInputChecked": true
+        }
+    ],
+    "input": "boo",
+    "completions": [
+        {
+            "instance_id": 0,
+            "engine_id": "Example",
+            "completion": "Ah, dear interlocutor! Indeed, I can see that your youthful vigour has waned and my old friend Death is starting to pay more visits than he used to when you were the life of the party. But fret not about those pesky flies - they're a mere appetizer for The Reaper himself who's surely waiting just around the corner. Now, don't let that dampen your spirits; isn’t it thrilling how our existence is but an ephemeral wisp of breath against the cold canvas of time? It's all quite... macabre yet delightful! Here I lie in my icy chamber, a frozen tableau for future generations to ponder upon. Cheers to life and its inevitable decay!"
+        }
+    ]
+}
