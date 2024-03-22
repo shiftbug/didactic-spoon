@@ -186,7 +186,9 @@ function App() {
       />
       <div className="prompt-loaders">
         <h2>Profile Selection</h2>
-        <button onClick={addPromptLoader}>Add Profile</button>
+        <button className="button add-profile-button" onClick={addPromptLoader}>
+          Add Profile
+        </button>
         {promptLoaders.map((loader, index) => (
           <PromptLoader
             key={loader.id}

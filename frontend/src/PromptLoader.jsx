@@ -52,79 +52,88 @@ function PromptLoader({
   return (
     <div className="Loader">
       <div className="Loader-header">
-        <label className="toggle-Loader">
-          <input type="checkbox" checked={isActive} onChange={onActiveChange} />
-          Active
-        </label>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <select
+            className="select task-select"
+            value={taskName}
+            onChange={(e) => handleTaskChange(e.target.value)}
+          >
+            <option value="" disabled>
+              Select a Task
+            </option>
+            {taskParams &&
+              Object.keys(taskParams).map((taskType) => (
+                <option key={taskType} value={taskType}>
+                  {taskType}
+                </option>
+              ))}
+          </select>
 
-        <select
-          className="select"
-          value={taskName}
-          onChange={(e) => handleTaskChange(e.target.value)}
-        >
-          <option value="" disabled>
-            Select a Task
-          </option>
-          {taskParams &&
-            Object.keys(taskParams).map((taskType) => (
-              <option key={taskType} value={taskType}>
-                {taskType}
+          <select
+            className="select tier-select"
+            value={loaderTier}
+            onChange={handleTierChange}
+          >
+            <option value="" disabled>
+              Select a Tier
+            </option>
+            {Array.from({ length: 10 }, (_, index) => (
+              <option key={index + 1} value={index + 1}>
+                Tier {index + 1}
               </option>
             ))}
-        </select>
-
-        <select
-          className="select"
-          value={loaderTier}
-          onChange={handleTierChange}
-        >
-          <option value="" disabled>
-            Select a Tier
-          </option>
-          {Array.from({ length: 10 }, (_, index) => (
-            <option key={index + 1} value={index + 1}>
-              Tier {index + 1}
-            </option>
-          ))}
-        </select>
-
-        {taskName && (
-          <span className="max-tokens">Max Tokens: {maxTokens}</span>
-        )}
+          </select>
+        </div>
       </div>
 
       <textarea
         className="Loader-output"
         ref={textareaRef}
-        value={completion || "No completion available"}
+        value={completion || ""}
         readOnly
       />
 
-      <div className="Loader-inputs">
-        <div className="checkbox-container">
-          <label>Select Inputs</label>
-          <div>
+      <div className="Loader-footer">
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <label className="toggle-Loader">
             <input
               type="checkbox"
-              id={`user-input-${taskName}`}
-              checked={userInputChecked}
-              onChange={onUserInputCheckedChange}
+              checked={isActive}
+              onChange={onActiveChange}
+              className="checkbox-input"
             />
-            <label htmlFor={`user-input-${taskName}`}>User Input</label>
-          </div>
-          {tierLowers.map((lower) => (
-            <div key={lower.id}>
+            Active
+          </label>
+          {taskName && (
+            <span className="max-tokens">Max Tokens: {maxTokens}</span>
+          )}
+          <div className="Loader-inputs">
+            <label>Select Inputs</label>
+            <div>
               <input
                 type="checkbox"
-                id={`lower-tier-${lower.id}`}
-                checked={checkedLowers.some(
-                  (checkedLower) => checkedLower.id === lower.id
-                )}
-                onChange={() => onCheckedLowerChange(lower.id)}
+                id={`user-input-${taskName}`}
+                checked={userInputChecked}
+                onChange={onUserInputCheckedChange}
               />
-              <label htmlFor={`lower-tier-${lower.id}`}>{lower.taskName}</label>
+              <label htmlFor={`user-input-${taskName}`}>User Input</label>
             </div>
-          ))}
+            {tierLowers.map((lower) => (
+              <div key={lower.id}>
+                <input
+                  type="checkbox"
+                  id={`lower-tier-${lower.id}`}
+                  checked={checkedLowers.some(
+                    (checkedLower) => checkedLower.id === lower.id
+                  )}
+                  onChange={() => onCheckedLowerChange(lower.id)}
+                />
+                <label htmlFor={`lower-tier-${lower.id}`}>
+                  {lower.taskName}
+                </label>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
