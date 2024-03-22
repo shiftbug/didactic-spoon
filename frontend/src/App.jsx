@@ -109,10 +109,16 @@ function App() {
     console.log("Tasks sent to backend:", tasks);
 
     try {
-      const response = await axios.post("/api/submit", {
-        tasks: tasks,
-        userText: userText,
-      });
+      const response = await axios.post(
+        "/api/submit",
+        {
+          tasks: tasks,
+          userText: userText,
+        },
+        {
+          timeout: 60000, // Set the timeout to 60 seconds (adjust as needed)
+        }
+      );
 
       console.log("Response from backend:", response.data);
 
@@ -148,10 +154,6 @@ function App() {
       })
     );
   }, []);
-
-  const updateTaskParams = (newTaskParams) => {
-    setTaskParams(newTaskParams);
-  };
 
   const updateAvailableTasks = (newTaskParams) => {
     setTaskParams(newTaskParams);

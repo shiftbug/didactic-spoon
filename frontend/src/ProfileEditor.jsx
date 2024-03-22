@@ -97,7 +97,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
   const handleAddTask = () => {
     const newTaskName = `NewTask_${Date.now()}`;
     const newTask = {
-      model: "gpt-3.5-turbo",
+      model: "ollama-nous-hermes2-mixtral",
       max_tokens: 500,
       temperature: 1,
       top_p: 1,
