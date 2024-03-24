@@ -129,7 +129,7 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
 
   return (
     <div className="profile-editor">
-      <h2>Profile Editor</h2>
+      <h2>Edit or Add Profiles as Needed</h2>
       <div className="user-input">
         <select
           className="select"

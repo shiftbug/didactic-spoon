@@ -187,9 +187,9 @@ function App() {
         onSubmit={handleSubmit}
       />
       <div className="prompt-loaders">
-        <h2>Profile Selection</h2>
+        <h2>Choose Profiles to Guide Your Transformations</h2>
         <button className="button add-profile-button" onClick={addPromptLoader}>
-          Add Profile
+          Add Output
         </button>
         {promptLoaders.map((loader, index) => (
           <PromptLoader

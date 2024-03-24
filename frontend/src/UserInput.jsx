@@ -10,7 +10,7 @@ function UserInput({ value, onChange, onSubmit }) {
 
   return (
     <div className="user-input">
-      <h2>User Input</h2>
+      <h2>Add Your Input Below</h2>
       <textarea
         className="text-input"
         value={value}

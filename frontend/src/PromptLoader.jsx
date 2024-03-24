@@ -59,7 +59,7 @@ function PromptLoader({
             onChange={(e) => handleTaskChange(e.target.value)}
           >
             <option value="" disabled>
-              Select a Task
+              Select a Profile
             </option>
             {taskParams &&
               Object.keys(taskParams).map((taskType) => (
