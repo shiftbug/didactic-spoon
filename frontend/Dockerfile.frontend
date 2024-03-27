@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM node:16 as build-stage
+FROM node:18 as build-stage
 
 # Set the working directory in the container
 WORKDIR /app
@@ -7,7 +7,7 @@ WORKDIR /app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install dependencies  
+# Install dependencies
 RUN npm ci
 
 # Copy the entire frontend directory to the working directory

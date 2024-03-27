@@ -41,3 +41,8 @@ typing_extensions
 tzdata
 urllib3==2.2.1
 Werkzeug
+psycopg2-binary==2.9.6
+SQLAlchemy==2.0.15
+Flask-SQLAlchemy==3.0.3
+Flask-Migrate==4.0.4
+bcrypt==4.0.1

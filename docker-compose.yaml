@@ -1,15 +1,17 @@
 version: "3.8"
 services:
   backend:
+    depends_on:
+      - database
     build:
       context: ./backend
       dockerfile: Dockerfile.backend
-    # Only expose the backend service to other Docker services, not to the host
-    # ports:
-    #   - "5000:5000"
+    command: sh -c "dockerize -wait tcp://database:5432 -timeout 30s && python init_db.py && gunicorn --workers 4 --threads 2 --bind 0.0.0.0:5000 app:app"
     environment:
       - FLASK_ENV=production
       - FLASK_APP=app.py
+      - DATABASE_URL=postgresql://RV-Flashlight-Admin:ant1PAst0!@database:5432/RV-Flashlight
+      - JWT_SECRET_KEY=MJNOInzDirMGq/wzP3ksgWi435BViXF4y7+4sNbDIG0=
     restart: on-failure
     logging:
       options:
@@ -23,7 +25,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.frontend
     ports:
-      - "5173:80" # Map Nginx's port 80 to the host's port 5173
+      - "5173:80"
     depends_on:
       - backend
     environment:
@@ -35,6 +37,20 @@ services:
         max-file: "3"
     networks:
       - app-network
+
+  database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=RV-Flashlight
+      - POSTGRES_USER=RV-Flashlight-Admin
+      - POSTGRES_PASSWORD=ant1PAst0!
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  db-data:
 
 networks:
   app-network:

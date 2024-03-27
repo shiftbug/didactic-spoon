@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import os
 import logging
+from models import Task
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,12 +16,15 @@ client = OpenAI(api_key=api_key)
 # Initialize the ollama client
 ollama_client = OpenAI(base_url='http://host.docker.internal:11434/v1/', api_key='ollama',)
 
-def get_completion(task_config):
+def get_completion(task_config, user_id):
     try:
         # Ensure task_config has all the required parameters
         required_params = ['model', 'temperature', 'max_tokens', 'top_p', 'frequency_penalty', 'presence_penalty', 'messages']
         if not all(param in task_config for param in required_params):
             raise ValueError("Missing required parameters in task configuration.")
+
+        # Retrieve user-specific tasks or completions from the database
+        user_tasks = Task.query.filter_by(user_id=user_id).all()
 
         if task_config['model'].startswith("ollama-"):
             # Remove the "ollama-" prefix from the model name

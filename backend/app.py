@@ -8,13 +8,22 @@ from flask_cors import CORS
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 from logging.handlers import RotatingFileHandler
-
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from models import db, User, Task, Log
+from auth import auth_bp
 
 executor = ThreadPoolExecutor()
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+
+jwt = JWTManager(app)
+db.init_app(app)
+
+app.register_blueprint(auth_bp, url_prefix='/api')
 
 LOGS_DIR = 'logs'
 TASK_FILE_PATH = os.path.join(os.path.dirname(__file__), 'task.json')
@@ -63,6 +72,7 @@ def process_text():
     return jsonify(processed_text=processed_text)
 
 @app.route('/submit', methods=['POST', 'OPTIONS'])
+@jwt_required
 def submit():
     if request.method == 'OPTIONS':
         response = make_response()
@@ -74,6 +84,7 @@ def submit():
         return response
 
     try:
+        user_id = get_jwt_identity()
         data = request.json
         tasks = data['tasks']
         user_text = data['userText']
@@ -138,7 +149,7 @@ def submit():
                             message['content'] = content
 
                     app.logger.debug(f"Sending task configuration to llm_call for task {instance_id}: {task_config}")
-                    future = executor.submit(llm_call, task_config)
+                    future = executor.submit(llm_call, task_config, user_id)
                     futures.append((future, instance_id, engine_id))
                 else:
                     app.logger.warning(f"No task configuration found for {engine_id}")
@@ -162,6 +173,11 @@ def submit():
                         "instance_id": instance_id,
                         "error": str(exc)
                     })
+
+        # Save the task data to the database
+        task = Task(user_id=user_id, task_data=data)
+        db.session.add(task)
+        db.session.commit()
 
         # Asynchronously write the log entry
         threading.Thread(target=write_log, args=(log_id, log_entry)).start()
