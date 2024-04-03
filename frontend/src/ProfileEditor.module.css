@@ -1,0 +1,83 @@
+.profileEditor {
+  margin-bottom: 20px;
+}
+
+.profileEditor h2 {
+  margin-bottom: 10px;
+}
+
+.userInput {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.textField {
+  margin-bottom: 5px;
+}
+
+.textField label {
+  color: lightgray;
+}
+
+.textField input {
+  color: lightgray;
+  height: 40px;
+  padding: 0 14px;
+  font-size: 0.875rem;
+}
+
+.textField textarea {
+  color: lightgray;
+  height: auto;
+  padding: 14px;
+  font-size: 1rem;
+}
+
+.slider {
+  width: 200px;
+  margin-right: 100px;
+  margin-left: 100px;
+  color: lightgray;
+}
+
+.select,
+.button {
+  height: 36px;
+  color: white;
+  padding: 7px 18px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  border: 1px solid transparent;
+  transition: border-color 0.25s;
+}
+
+.select:hover,
+.button:hover {
+  border-color: #646cff;
+}
+
+.select:focus,
+.select:focus-visible,
+.button:focus,
+.button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.select {
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .slider {
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+  }
+}

@@ -53,26 +53,92 @@ def resource_not_found(e):
 def internal_server_error(e):
     return jsonify(error=str(e)), 500
 
-@app.route('/tasks', methods=['GET', 'POST'])
+@app.route('/tasks', methods=['GET'])
+@jwt_required()
 def tasks():
-    if request.method == 'GET':
-        with open(TASK_FILE_PATH, 'r') as file:
-            tasks = json.load(file)
-        return jsonify(tasks)
-    elif request.method == 'POST':
-        new_tasks = request.json
-        with open(TASK_FILE_PATH, 'w') as file:
-            json.dump(new_tasks, file, indent=4)
-        return jsonify(new_tasks), 200
+    user_id = get_jwt_identity()
+    print(f"Fetching tasks for user ID: {user_id}")
 
+    user_tasks = Task.query.filter_by(user_id=user_id).all()
+    print("Tasks retrieved from the database:")
+    #print(f"{user_tasks}")
+
+    task_data = []
+    for task in user_tasks:
+        task_info = {
+            'id': task.id,
+            'task_name': task.task_name,
+            'max_tokens': task.max_tokens
+        }
+        task_data.append(task_info)
+
+    print("Task data to be returned: ")
+    print(f"{task_data}")  
+    return jsonify(task_data)
+
+@app.route('/taskparams', methods=['POST'])
+@app.route('/taskparams/<int:task_id>', methods=['GET', 'PUT', 'PATCH'])
+@jwt_required()
+def task_params(task_id=None):
+    if request.method == 'POST':
+        data = request.get_json()
+        user_id = get_jwt_identity()
+        new_task = Task(
+            user_id=user_id,
+            task_name=data['task_name'],
+            model=data['model'],
+            max_tokens=data['max_tokens'],
+            temperature=data['temperature'],
+            top_p=data['top_p'],
+            frequency_penalty=data['frequency_penalty'],
+            presence_penalty=data['presence_penalty'],
+            messages=data['messages']
+        )
+        db.session.add(new_task)
+        db.session.commit()
+        return jsonify(id=new_task.id), 201
+
+    if task_id is None:
+        return jsonify({'error': 'Task ID is required'}), 400
+
+    task = Task.query.get(task_id)
+    if task is None:
+        return jsonify({'error': 'Task not found'}), 404
+
+    if request.method == 'GET':
+        task_info = {
+            'id': task.id,
+            'task_name': task.task_name,
+            'model': task.model,
+            'max_tokens': task.max_tokens,
+            'temperature': task.temperature,
+            'top_p': task.top_p,
+            'frequency_penalty': task.frequency_penalty,
+            'presence_penalty': task.presence_penalty,
+            'messages': task.messages
+        }
+        return jsonify(task_info)
+
+    elif request.method in ['PUT', 'PATCH']:
+        data = request.get_json()
+        task.task_name = data.get('task_name', task.task_name)
+        task.model = data.get('model', task.model)
+        task.max_tokens = data.get('max_tokens', task.max_tokens)
+        task.temperature = data.get('temperature', task.temperature)
+        task.top_p = data.get('top_p', task.top_p)
+        task.frequency_penalty = data.get('frequency_penalty', task.frequency_penalty)
+        task.presence_penalty = data.get('presence_penalty', task.presence_penalty)
+        task.messages = data.get('messages', task.messages)
+        db.session.commit()
+        return jsonify({'message': 'Task updated successfully'}), 200
 @app.route('/process_text', methods=['POST'])
 def process_text():
     text = request.form['text']
     processed_text = text
     return jsonify(processed_text=processed_text)
 
-@app.route('/submit', methods=['POST', 'OPTIONS'])
-@jwt_required
+@app.route('/submit', methods=['POST', 'OPTIONS'], endpoint='submit_endpoint')
+@jwt_required()
 def submit():
     if request.method == 'OPTIONS':
         response = make_response()
@@ -100,13 +166,6 @@ def submit():
             "completions": []
         }
 
-        task_file_path = 'task.json'
-        if not os.path.exists(task_file_path):
-            raise FileNotFoundError("The task configuration file does not exist.")
-
-        with open(task_file_path) as f:
-            task_configs = json.load(f)
-
         max_tier = max(int(task['tier']) for task in tasks)
 
         for tier in range(1, max_tier + 1):
@@ -118,45 +177,57 @@ def submit():
 
             for task in tier_tasks:
                 instance_id = task['instance_id']
-                engine_id = task['taskName']
+                task_id = task['task_id']  # Assuming the task ID is included in the task data
                 user_input_checked = task.get('userInputChecked', False)
 
                 app.logger.debug(f"Processing task: {task}")
                 app.logger.debug(f"User input checked for task {instance_id}: {user_input_checked}")
 
-                if engine_id in task_configs:
-                    task_config = task_configs[engine_id]
-
-                    app.logger.debug(f"Task configuration for {engine_id}: {task_config}")
-
-                    # Get completions from selected lower tier loaders
-                    lower_tier_completions = [
-                        completion['completion'] for completion in log_entry["completions"]
-                        if completion['instance_id'] in [loader['instance_id'] for loader in task['lowerTierLoaders']]
-                    ]
-                    completions_text = "\n".join(lower_tier_completions)
-
-                    for message in task_config['messages']:
-                        if message['role'] == 'user':
-                            content = message['content']
-                            if user_input_checked:
-                                content = content.replace('<<user_input>>', user_text)
-                                app.logger.debug(f"User text included for task {instance_id}: {user_text}")
-                            else:
-                                content = content.replace('<<user_input>>', "")
-                                app.logger.debug(f"User text excluded for task {instance_id}")
-                            content = content.replace('<<completions>>', completions_text)
-                            message['content'] = content
-
-                    app.logger.debug(f"Sending task configuration to llm_call for task {instance_id}: {task_config}")
-                    future = executor.submit(llm_call, task_config, user_id)
-                    futures.append((future, instance_id, engine_id))
-                else:
-                    app.logger.warning(f"No task configuration found for {engine_id}")
+                task_config = Task.query.get(task_id)  # Fetch the task configuration from the database
+                if task_config is None:
+                    app.logger.warning(f"No task configuration found for task ID {task_id}")
                     log_entry["completions"].append({
                         "instance_id": instance_id,
-                        "error": f"No task configuration found for {engine_id}"
+                        "error": f"No task configuration found for task ID {task_id}"
                     })
+                    continue
+
+                # Convert the task_config object to a dictionary
+                task_config_dict = {
+                    'id': task_config.id,
+                    'task_name': task_config.task_name,
+                    'model': task_config.model,
+                    'max_tokens': task_config.max_tokens,
+                    'temperature': task_config.temperature,
+                    'top_p': task_config.top_p,
+                    'frequency_penalty': task_config.frequency_penalty,
+                    'presence_penalty': task_config.presence_penalty,
+                    'messages': task_config.messages
+                }
+
+                # Get completions from selected lower tier loaders
+                lower_tier_completions = [
+                    completion['completion'] for completion in log_entry["completions"]
+                    if completion['instance_id'] in [loader['instance_id'] for loader in task['lowerTierLoaders']]
+                ]
+                completions_text = "\n".join(lower_tier_completions)
+
+                for message in task_config_dict['messages']:
+                    if message['role'] == 'user':
+                        content = message['content']
+                        if user_input_checked:
+                            content = content.replace('<<user_input>>', user_text)
+                            app.logger.debug(f"User text included for task {instance_id}: {user_text}")
+                        else:
+                            content = content.replace('<<user_input>>', "")
+                            app.logger.debug(f"User text excluded for task {instance_id}")
+                        content = content.replace('<<completions>>', completions_text)
+                        message['content'] = content
+
+                app.logger.debug(f"Sending task configuration to llm_call for task {instance_id}: {task_config_dict}")
+                with app.app_context():
+                    future = executor.submit(llm_call, task_config_dict, user_id)
+                futures.append((future, instance_id, task_config.task_name))
 
             # Wait for all futures in the current tier to complete before moving to the next tier
             for future, instance_id, engine_id in futures:
@@ -173,11 +244,6 @@ def submit():
                         "instance_id": instance_id,
                         "error": str(exc)
                     })
-
-        # Save the task data to the database
-        task = Task(user_id=user_id, task_data=data)
-        db.session.add(task)
-        db.session.commit()
 
         # Asynchronously write the log entry
         threading.Thread(target=write_log, args=(log_id, log_entry)).start()

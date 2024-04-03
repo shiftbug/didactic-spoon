@@ -3,6 +3,7 @@ from openai import OpenAI
 import os
 import logging
 from models import Task
+from flask import current_app
 
 # Load environment variables from .env file
 load_dotenv()
@@ -38,8 +39,9 @@ def get_completion(task_config, user_id):
         # Return the completion text
         return completion.choices[0].message.content
     except Exception as e:
-        # Log an error message
-        logging.error("An error occurred while getting the completion: %s", str(e))
+        with current_app.app_context():
+            # Log an error message using the current_app logger
+            current_app.logger.error("An error occurred while getting the completion: %s", str(e))
         # Return an error message
         error_message = f"An error occurred while getting the completion: {str(e)}"
         return error_message

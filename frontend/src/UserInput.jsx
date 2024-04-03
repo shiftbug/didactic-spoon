@@ -1,29 +1,22 @@
+// UserInput.jsx
 import React from "react";
+import PropTypes from "prop-types";
+import styles from "./UserInput.module.css";
 
-function UserInput({ value, onChange, onSubmit }) {
-  const handleKeyPress = (event) => {
-    // Trigger submit when the user presses Enter
-    if (event.key === "Enter") {
-      onSubmit();
-    }
-  };
-
+function UserInput({ text, onTextChange, onSubmit }) {
   return (
-    <div className="user-input">
-      <h2>Add Your Input Below</h2>
-      <textarea
-        className="text-input"
-        value={value}
-        onChange={onChange}
-        onKeyPress={handleKeyPress}
-        placeholder="Enter your text here"
-        rows={4} // Adjust the number of rows as needed for a bigger vertical window
-      />
-      <button className="button" onClick={onSubmit}>
-        Submit
-      </button>
+    <div className={styles.userInput}>
+      <h2>User Input</h2>
+      <textarea value={text} onChange={(e) => onTextChange(e.target.value)} />
+      <button onClick={onSubmit}>Submit</button>
     </div>
   );
 }
+
+UserInput.propTypes = {
+  text: PropTypes.string.isRequired,
+  onTextChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default UserInput;

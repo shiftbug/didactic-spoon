@@ -21,8 +21,15 @@ class User(db.Model):
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    task_data = db.Column(db.JSON, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    task_name = db.Column(db.String(100), nullable=False)
+    model = db.Column(db.String(100), nullable=False)
+    max_tokens = db.Column(db.Integer, nullable=False)
+    temperature = db.Column(db.Float, nullable=False)
+    top_p = db.Column(db.Float, nullable=False)
+    frequency_penalty = db.Column(db.Float, nullable=False)
+    presence_penalty = db.Column(db.Float, nullable=False)
+    messages = db.Column(db.JSON, nullable=False)
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)

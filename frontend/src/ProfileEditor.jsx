@@ -1,33 +1,57 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import PropTypes from "prop-types";
 import Slider from "@mui/material/Slider";
 import TextField from "@mui/material/TextField";
-import "./App.css";
+import styles from "./ProfileEditor.module.css";
+import axios from "axios";
+import TaskSelector from "./TaskSelector";
 
 const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
-  const [tasks, setTasks] = useState({});
-  const [selectedTaskName, setSelectedTaskName] = useState("");
+  const [tasks, setTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  const fetchTasks = () => {
-    axios
-      .get("/api/tasks")
-      .then((response) => {
-        console.log("Response data in ProfileEditor:", response.data);
-        setTasks(response.data);
-        onTaskParamsChange(response.data);
-      })
-      .catch((error) => console.error("Error fetching tasks:", error));
+  const fetchTasks = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("/api/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Response data in ProfileEditor:", response.data);
+      setTasks(response.data);
+      onTaskParamsChange(response.data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
   };
 
-  const handleTaskSelection = (e) => {
-    const taskName = e.target.value;
-    setSelectedTaskName(taskName);
-    setSelectedTask(tasks[taskName]);
+  const handleTaskSelection = async (taskId) => {
+    console.log("Selected task ID:", taskId);
+    if (taskId) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`/api/taskparams/${taskId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("Selected task configuration:", response.data);
+        setSelectedTask(response.data);
+      } catch (error) {
+        console.error(
+          `Error fetching task parameters for task ID "${taskId}":`,
+          error
+        );
+        setSelectedTask(null);
+      }
+    } else {
+      setSelectedTask(null);
+    }
   };
 
   const handleTaskChange = (e, key, index, role) => {
@@ -38,65 +62,62 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
       updatedValue = parseFloat(value);
     }
 
-    const updatedTask = { ...selectedTask };
+    setSelectedTask((prevTask) => {
+      const updatedTask = { ...prevTask };
 
-    if (key === "messages" && index !== undefined) {
-      const updatedMessages = [...updatedTask.messages];
-      const messageIndex = updatedMessages.findIndex(
-        (message) => message.role === role
-      );
-      if (messageIndex !== -1) {
-        updatedMessages[messageIndex].content = updatedValue;
-        updatedTask.messages = updatedMessages;
+      if (key === "messages" && index !== undefined) {
+        const updatedMessages = [...(updatedTask.messages || [])];
+        const messageIndex = updatedMessages.findIndex(
+          (message) => message.role === role
+        );
+        if (messageIndex !== -1) {
+          updatedMessages[messageIndex].content = updatedValue;
+          updatedTask.messages = updatedMessages;
+        }
+      } else {
+        updatedTask[name] = updatedValue;
       }
-    } else {
-      updatedTask[name] = updatedValue;
-    }
 
-    setSelectedTask(updatedTask);
-    setTasks({ ...tasks, [selectedTaskName]: updatedTask });
-    onTaskChange(selectedTaskName, {
-      ...tasks,
-      [selectedTaskName]: updatedTask,
+      return updatedTask;
     });
   };
 
-  const handleSave = () => {
-    setTasks((prevTasks) => ({
-      ...prevTasks,
-      [setSelectedTaskName]: selectedTaskName,
-    }));
-
-    axios
-      .post("/api/tasks", {
-        ...tasks,
-        [selectedTaskName]: selectedTask,
-      })
-      .then((response) => {
-        console.log("Tasks updated:", response.data);
-        setSelectedTask(null);
-        setSelectedTaskName("");
-        fetchTasks();
-        onTaskParamsChange(response.data); // Update available tasks in App.jsx
-      })
-      .catch((error) => {
-        console.error("Error updating tasks:", error);
-      });
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `/api/taskparams/${selectedTask.id}`,
+        selectedTask,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Task updated:", response.data);
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === selectedTask.id ? response.data : task
+        )
+      );
+      onTaskParamsChange(response.data);
+      onTaskChange(selectedTask.id, selectedTask.task_name);
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
 
   const handleTaskNameChange = (e) => {
-    const newTaskName = e.target.value;
-    const updatedTasks = { ...tasks };
-    updatedTasks[newTaskName] = { ...selectedTask };
-    delete updatedTasks[selectedTaskName];
-
-    setTasks(updatedTasks);
-    setSelectedTaskName(newTaskName);
+    const updatedTaskName = e.target.value;
+    setSelectedTask((prevTask) => ({
+      ...prevTask,
+      task_name: updatedTaskName,
+    }));
   };
 
-  const handleAddTask = () => {
-    const newTaskName = `NewTask_${Date.now()}`;
+  const handleAddTask = async () => {
     const newTask = {
+      task_name: `NewTask_${Date.now()}`,
       model: "ollama-nous-hermes2-mixtral",
       max_tokens: 500,
       temperature: 1,
@@ -112,9 +133,19 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
       ],
     };
 
-    setTasks((prevTasks) => ({ ...prevTasks, [newTaskName]: newTask }));
-    setSelectedTaskName(newTaskName);
-    setSelectedTask(newTask);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post("/api/taskparams", newTask, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("New task created:", response.data);
+      setTasks((prevTasks) => [...prevTasks, response.data]);
+      setSelectedTask(response.data);
+    } catch (error) {
+      console.error("Error creating new task:", error);
+    }
   };
 
   const fieldOrder = [
@@ -128,22 +159,15 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
   ];
 
   return (
-    <div className="profile-editor">
+    <div className={styles.profileEditor}>
       <h2>Edit or Add Profiles as Needed</h2>
-      <div className="user-input">
-        <select
-          className="select"
-          onChange={handleTaskSelection}
-          value={selectedTaskName || ""}
-        >
-          <option value="">Edit a Profile</option>
-          {Object.keys(tasks).map((taskName) => (
-            <option key={taskName} value={taskName}>
-              {taskName}
-            </option>
-          ))}
-        </select>
-        <button className="button" type="button" onClick={handleAddTask}>
+      <div className={styles.userInput}>
+        <TaskSelector
+          taskId={selectedTask ? selectedTask.id : ""}
+          availableTasks={tasks}
+          onTaskChange={handleTaskSelection}
+        />
+        <button className={styles.button} type="button" onClick={handleAddTask}>
           New Profile
         </button>
       </div>
@@ -151,9 +175,9 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
       {selectedTask && (
         <form>
           <TextField
-            className="text-field"
+            className={styles.textField}
             label="Profile Name"
-            value={selectedTaskName || ""}
+            value={selectedTask.task_name || ""}
             onChange={handleTaskNameChange}
             variant="outlined"
             fullWidth
@@ -164,15 +188,14 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
             if (key === "messages") {
               return (
                 <div key={key}>
-                  {value
+                  {(selectedTask.messages || [])
                     .filter((message) => message.role === "system")
                     .map((message, index) => (
                       <div
                         key={`system-message-${index}`}
-                        style={{ width: "100%" }}
+                        className={styles.textField}
                       >
                         <TextField
-                          className="text-field"
                           label="System Message"
                           name={`system-message-${index}`}
                           value={message.content || ""}
@@ -187,15 +210,14 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
                         />
                       </div>
                     ))}
-                  {value
+                  {(selectedTask.messages || [])
                     .filter((message) => message.role === "user")
                     .map((message, index) => (
                       <div
                         key={`user-message-${index}`}
-                        style={{ width: "100%" }}
+                        className={styles.textField}
                       >
                         <TextField
-                          className="text-field"
                           label="User Message"
                           name={`user-message-${index}`}
                           value={message.content || ""}
@@ -233,14 +255,11 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
               return (
                 <div
                   key={key}
-                  style={{
-                    marginBottom: "5px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                  className={styles.textField}
+                  style={{ display: "flex", alignItems: "center" }}
                 >
                   {isNumber && (
-                    <div className="slider">
+                    <div className={styles.slider}>
                       <Slider
                         value={typeof value === "number" ? value : minVal}
                         onChange={(e, newValue) =>
@@ -264,7 +283,6 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
                   )}
                   <div style={{ flex: 1 }}>
                     <TextField
-                      className="text-field"
                       label={key
                         .replace(/_/g, " ")
                         .replace(/^\w/, (c) => c.toUpperCase())}
@@ -286,13 +304,18 @@ const ProfileEditor = ({ onTaskParamsChange, onTaskChange }) => {
               );
             }
           })}
-          <button className="button" type="button" onClick={handleSave}>
+          <button className={styles.button} type="button" onClick={handleSave}>
             Save Profile
           </button>
         </form>
       )}
     </div>
   );
+};
+
+ProfileEditor.propTypes = {
+  onTaskParamsChange: PropTypes.func.isRequired,
+  onTaskChange: PropTypes.func.isRequired,
 };
 
 export default ProfileEditor;

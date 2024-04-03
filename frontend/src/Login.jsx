@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "./AuthContext";
+import styles from "./Login.module.css";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -12,7 +13,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/login", { username, password });
+      const response = await axios.post("/login", { username, password });
       const token = response.data.access_token;
       login(token);
       navigate("/");
@@ -22,14 +23,14 @@ const Login = () => {
   };
 
   const handleRegister = () => {
-    navigate("/register"); // Navigate to the Register page
+    navigate("/register");
   };
 
   return (
-    <div className="login-container">
+    <div className={styles.login}>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="username">Username</label>
           <input
             type="text"
@@ -39,7 +40,7 @@ const Login = () => {
             required
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="password">Password</label>
           <input
             type="password"
@@ -52,8 +53,7 @@ const Login = () => {
         <button type="submit">Login</button>
         <button type="button" onClick={handleRegister}>
           Register
-        </button>{" "}
-        {/* Register button */}
+        </button>
       </form>
     </div>
   );

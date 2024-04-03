@@ -1,0 +1,50 @@
+.promptLoader {
+  margin-bottom: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.removeButton {
+  background-color: #1a1a1a;
+  color: white;
+  font-size: 16px;
+  padding: 7px 18px;
+  height: 36px;
+  margin: 4px 12px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.completion {
+  width: 100%;
+  color: white;
+  background-color: #1a1a1a;
+  padding: 7px 18px;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.settings {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.settings label {
+  margin-right: 10px;
+}

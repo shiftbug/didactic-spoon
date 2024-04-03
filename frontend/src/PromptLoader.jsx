@@ -1,160 +1,126 @@
-import React, { useEffect, useRef, useMemo, useCallback } from "react";
+import React from "react";
 import PropTypes from "prop-types";
+import styles from "./PromptLoader.module.css";
+import TaskSelector from "./TaskSelector";
 
 function PromptLoader({
-  onActiveChange,
-  onTaskChange,
-  onTierChange,
-  isActive,
+  id,
+  taskId,
   taskName,
+  isActive,
   completion,
   loaderTier,
   checkedLowers,
-  onCheckedLowerChange,
-  taskParams,
-  maxTokens,
   userInputChecked,
+  onActiveChange,
+  onRemove,
+  onCheckedLowerChange,
   onUserInputCheckedChange,
-  promptLoaders,
+  availableTasks,
+  userText,
+  maxTokens,
+  onTaskChange,
+  handleTierChange,
+  promptLoaders, //
 }) {
-  const textareaRef = useRef(null);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [completion]);
-
-  const tierLowers = useMemo(() => {
-    return (
-      promptLoaders?.filter(
-        (otherLoader) =>
-          otherLoader.loaderTier < loaderTier && otherLoader.isActive
-      ) || []
-    );
-  }, [promptLoaders, loaderTier]);
-
-  const handleTaskChange = useCallback(
-    (taskName) => {
-      onTaskChange(taskName);
-    },
-    [onTaskChange]
-  );
-
-  const handleTierChange = useCallback(
-    (e) => {
-      onTierChange(parseInt(e.target.value));
-    },
-    [onTierChange]
+  const tierLowers = promptLoaders.filter(
+    (loader) => loader.loaderTier < loaderTier && loader.isActive
   );
 
   return (
-    <div className="Loader">
-      <div className="Loader-header">
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <select
-            className="select task-select"
-            value={taskName}
-            onChange={(e) => handleTaskChange(e.target.value)}
-          >
-            <option value="" disabled>
-              Select a Profile
-            </option>
-            {taskParams &&
-              Object.keys(taskParams).map((taskType) => (
-                <option key={taskType} value={taskType}>
-                  {taskType}
-                </option>
-              ))}
-          </select>
-
-          <select
-            className="select tier-select"
-            value={loaderTier}
-            onChange={handleTierChange}
-          >
-            <option value="" disabled>
-              Select a Tier
-            </option>
-            {Array.from({ length: 10 }, (_, index) => (
-              <option key={index + 1} value={index + 1}>
-                Tier {index + 1}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className={styles.promptLoader}>
+      <div className={styles.header}>
+        <h3>{taskName}</h3>
+        <button className={styles.removeButton} onClick={onRemove}>
+          Remove
+        </button>
       </div>
-
-      <textarea
-        className="Loader-output"
-        ref={textareaRef}
-        value={completion || ""}
-        readOnly
-      />
-
-      <div className="Loader-footer">
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <label className="toggle-Loader">
+      <div className={styles.content}>
+        <textarea className={styles.completion} value={completion} readOnly />
+        <div className={styles.settings}>
+          <label>
             <input
               type="checkbox"
               checked={isActive}
               onChange={onActiveChange}
-              className="checkbox-input"
             />
             Active
           </label>
-          {taskName && (
-            <span className="max-tokens">Max Tokens: {maxTokens}</span>
-          )}
-          <div className="Loader-inputs">
-            <label>Select Inputs</label>
-            <div>
-              <input
-                type="checkbox"
-                id={`user-input-${taskName}`}
-                checked={userInputChecked}
-                onChange={onUserInputCheckedChange}
-              />
-              <label htmlFor={`user-input-${taskName}`}>User Input</label>
-            </div>
+          <label>
+            Task:
+            <TaskSelector
+              taskId={selectedTask ? selectedTask.id : ""}
+              availableTasks={tasks}
+              onTaskChange={handleTaskSelection}
+            />
+          </label>
+          <label>
+            Tier:
+            <select
+              value={loaderTier}
+              onChange={(e) =>
+                handleTierChange(id, Number(e.target.value), availableTasks)
+              }
+            >
+              <option value="" disabled>
+                Select a Tier
+              </option>
+              {Array.from({ length: 10 }, (_, index) => (
+                <option key={index + 1} value={index + 1}>
+                  Tier {index + 1}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={userInputChecked}
+              onChange={onUserInputCheckedChange}
+            />
+            User Input
+          </label>
+          <div>
+            Lower Tiers:
             {tierLowers.map((lower) => (
-              <div key={lower.id}>
+              <label key={lower.id}>
                 <input
                   type="checkbox"
-                  id={`lower-tier-${lower.id}`}
-                  checked={checkedLowers.some(
-                    (checkedLower) => checkedLower.id === lower.id
-                  )}
+                  checked={checkedLowers.includes(lower.id)}
                   onChange={() => onCheckedLowerChange(lower.id)}
                 />
-                <label htmlFor={`lower-tier-${lower.id}`}>
-                  {lower.taskName}
-                </label>
-              </div>
+                {lower.taskName}
+              </label>
             ))}
           </div>
         </div>
+      </div>
+      <div className={styles.footer}>
+        <p>Max Tokens: {maxTokens}</p>
       </div>
     </div>
   );
 }
 
 PromptLoader.propTypes = {
-  onActiveChange: PropTypes.func.isRequired,
-  onTaskChange: PropTypes.func.isRequired,
-  onTierChange: PropTypes.func.isRequired,
-  isActive: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
+  taskId: PropTypes.number,
   taskName: PropTypes.string.isRequired,
-  completion: PropTypes.string,
+  isActive: PropTypes.bool.isRequired,
+  completion: PropTypes.string.isRequired,
   loaderTier: PropTypes.number.isRequired,
-  checkedLowers: PropTypes.array.isRequired,
-  onCheckedLowerChange: PropTypes.func.isRequired,
-  taskParams: PropTypes.object,
-  maxTokens: PropTypes.number,
+  checkedLowers: PropTypes.arrayOf(PropTypes.number).isRequired,
   userInputChecked: PropTypes.bool.isRequired,
+  onActiveChange: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
+  onCheckedLowerChange: PropTypes.func.isRequired,
   onUserInputCheckedChange: PropTypes.func.isRequired,
-  promptLoaders: PropTypes.array,
+  availableTasks: PropTypes.array.isRequired,
+  userText: PropTypes.string.isRequired,
+  maxTokens: PropTypes.number.isRequired,
+  onTaskChange: PropTypes.func.isRequired,
+  handleTierChange: PropTypes.func.isRequired,
+  promptLoaders: PropTypes.array.isRequired,
 };
 
 export default PromptLoader;
